@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/Landingpage";
 import Navbar from "./components/Navbar";
+import CreatePage from "./pages/CreateArtPiecePage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/upload" element={<CreatePage />} />
           </Routes>
         </div>
       </BrowserRouter>
