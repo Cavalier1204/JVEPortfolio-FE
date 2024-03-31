@@ -1,64 +1,116 @@
 import { useState } from "react";
 import { imageUploader } from "../services/Firebase";
 import { v4 } from "uuid";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
+import save from "../services/ArtPieceManager";
 
 const CreatePage = () => {
-  const [img, setImg] = useState([]);
+  // State for form values
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [year, setYear] = useState(0);
+  const [module, setModule] = useState(0);
+  const [media, setMedia] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (img !== null) {
-      for (let i = 0; i < img.length; i++) {
-        const file = img[i];
-        const fileType = file.type.split("/")[0]; // Get the first part of MIME type (e.g., "image" or "video")
+    if (media !== null) {
+      const mediaFiles = [];
+      for (let i = 0; i < media.length; i++) {
+        const file = media[i];
+        const fileType = file.type.split("/")[0];
 
-        // Create a reference path based on file type
         let storageRef;
         if (fileType === "image") {
           storageRef = ref(imageUploader, `images/${v4()}`);
         } else if (fileType === "video") {
-          storageRef = ref(videoUploader, `videos/${v4()}`);
+          storageRef = ref(imageUploader, `videos/${v4()}`);
         } else {
           continue;
         }
 
         try {
           const uploadTask = await uploadBytes(storageRef, file);
-          console.log(uploadTask);
-          const downloadURL = await getDownloadURL(uploadTask.ref);
-          console.log(downloadURL);
+          const relativePath = storageRef.fullPath;
+
+          mediaFiles.push({
+            locationReference: relativePath,
+            order: i + 1,
+          });
         } catch (error) {
           console.error("Error uploading file:", error);
         }
       }
+
+      // Create artPiece object
+      const artPiece = {
+        title,
+        description,
+        year,
+        module,
+        media: mediaFiles,
+      };
+
+      const newArtPiece = await save(artPiece);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="title" id="" />
       <label htmlFor="title">Titel</label>
+      <input
+        type="text"
+        name="title"
+        id="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
 
-      <input type="text" name="description" id="" />
-      <label htmlFor="description">Bescrijving</label>
+      <label htmlFor="description">Beschrijving</label>
+      <input
+        type="text"
+        name="description"
+        id="description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
 
-      <input type="text" name="year" id="" />
       <label htmlFor="year">Leerjaar</label>
+      <input
+        type="text"
+        name="year"
+        id="year"
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+        required
+      />
 
-      <input type="text" name="module" id="" />
       <label htmlFor="module">Module</label>
+      <input
+        type="text"
+        name="module"
+        id="module"
+        value={module}
+        onChange={(e) => setModule(e.target.value)}
+        required
+      />
 
+      <label htmlFor="media">Media</label>
       <input
         type="file"
         name="media"
-        id=""
-        onChange={(e) => setImg(e.target.files)}
+        id="media"
+        onChange={(e) => setMedia(e.target.files)}
+        multiple
       />
-      <label htmlFor="media">Media</label>
 
-      <button className="bg-blue-500 text-black" type="submit">
+      <button
+        className="bg-blue-500 text-white font-semibold border-solid border-black rounded p-2 border-2"
+        type="submit"
+      >
         Submit
       </button>
     </form>
