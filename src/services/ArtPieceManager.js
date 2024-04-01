@@ -1,10 +1,31 @@
 import axios from "axios";
 
-const url = "http://localhost:8080/products";
+const publicUrl = `${process.env.REACT_APP_API_LINK}/public/artpiece`;
+const protectedUrl = `${process.env.REACT_APP_API_LINK}/api/artpiece`;
 
-const save = async (artpiece, accessToken) => {
+// Get one
+const getArtPiece = async (id) => {
   return await axios
-    .post(url, artpiece, {
+    .get(`${publicUrl}/${id}`)
+    .then((response) => response.data);
+};
+
+// Get by year by module
+const getManyArtPieces = async (year, module) => {
+  return await axios
+    .get(publicUrl, {
+      params: {
+        year: year,
+        module: module,
+      },
+    })
+    .then((response) => response.data);
+};
+
+// Save
+const saveArtPiece = async (artpiece, accessToken) => {
+  return await axios
+    .post(protectedUrl, artpiece, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -12,6 +33,18 @@ const save = async (artpiece, accessToken) => {
     .then((response) => response.data);
 };
 
+// Delete
+const deleteArtPiece = async (artpiece, accessToken) => {
+  return await axios.delete(`${protectedUrl}/${artpiece.id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
 export default {
-  save,
+  getArtPiece,
+  getManyArtPieces,
+  saveArtPiece,
+  deleteArtPiece,
 };
