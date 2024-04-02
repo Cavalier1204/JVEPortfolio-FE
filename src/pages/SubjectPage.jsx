@@ -1,47 +1,62 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { getDownloadURL, ref } from "firebase/storage";
 import { imageUploader } from "../services/Firebase";
 
-const ModulePage = () => {
-  const { year, module } = useParams();
-  // const [artPieces, setArtPieces] = useState(null);
-  // const [werkPraktijkPieces, setWerkPraktijkPieces] = useState(null);
-  // const [kennisVaardighedenPieces, setKennisVaardighedenPieces] =
-  //   useState(null);
-  // const [positioneringPieces, setPositioneringPieces] = useState(null);
+const SubjectPage = () => {
+  const { year, module, subject } = useParams();
+  const [artPieces, setArtPieces] = useState([]);
+  const [werkPraktijkPieces, setWerkPraktijkPieces] = useState(null);
+  const [kennisVaardighedenPieces, setKennisVaardighedenPieces] =
+    useState(null);
+  const [positioneringPieces, setPositioneringPieces] = useState(null);
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const artPiecesData = await ArtPieceManager.getManyArtPieces({
-  //       year,
-  //       module,
-  //     });
+  const navigate = useNavigate();
 
-  //     setArtPieces(artPiecesData);
+  useEffect(() => {
+    const getData = async () => {
+      const artPiecesData = await ArtPieceManager.getManyArtPieces({
+        year,
+        module,
+      });
 
-  //     if (artPieces) {
-  //       setWerkPraktijkPieces(
-  //         artPieces.filter(
-  //           (item) =>
-  //             item.subject === "WERKPRAKTIJK_1" ||
-  //             item.subject === "WERKPRAKTIJK_2",
-  //         ),
-  //       );
-  //       setKennisVaardighedenPieces(
-  //         artPieces.filter(
-  //           (item) => item.subject === "THEORIE" || item.subject === "SKILLS",
-  //         ),
-  //       );
-  //       setPositioneringPieces(
-  //         artPieces.filter((item) => item.subject === "POSITIONERING"),
-  //       );
-  //     }
-  //   };
+      setArtPieces(artPiecesData);
+      console.log(artPieces);
 
-  //   getData();
-  // }, []);
+      if (artPieces) {
+        switch (subject) {
+          case "werkpraktijk":
+            setWerkPraktijkPieces(
+              artPieces.filter(
+                (item) =>
+                  item.subject === "WERKPRAKTIJK_1" ||
+                  item.subject === "WERKPRAKTIJK_2",
+              ),
+            );
+            break;
+          case "kennis":
+            setKennisVaardighedenPieces(
+              artPieces.filter(
+                (item) =>
+                  item.subject === "THEORIE" || item.subject === "SKILLS",
+              ),
+            );
+            break;
+          case "positionering":
+            setPositioneringPieces(
+              artPieces.filter((item) => item.subject === "POSITIONERING"),
+            );
+            break;
+          default:
+            navigate("/");
+            break;
+        }
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <div className="container px-5 py-6 mx-auto">
@@ -117,4 +132,4 @@ const ModulePage = () => {
   );
 };
 
-export default ModulePage;
+export default SubjectPage;

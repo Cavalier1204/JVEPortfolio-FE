@@ -15,8 +15,8 @@ const getManyArtPieces = async ({ year, module }) => {
   return await axios
     .get(publicUrl, {
       params: {
-        year: year,
-        module: module,
+        year: parseInt(year),
+        module: parseInt(module),
       },
     })
     .then((response) => response.data);
