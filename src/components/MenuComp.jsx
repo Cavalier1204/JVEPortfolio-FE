@@ -6,7 +6,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const SubMenu = () => {
+const SubMenu = (year) => {
   return (
     <Menu.Items
       static
@@ -17,7 +17,7 @@ const SubMenu = () => {
           <Menu.Item key={module}>
             {({ active }) => (
               <a
-                href="#"
+                href={`/module/${year.year}/${module}`}
                 className={classNames(
                   active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                   "block px-4 py-2 text-sm",
@@ -33,22 +33,20 @@ const SubMenu = () => {
   );
 };
 
-const MenuComp = ({ leerjaren }) => {
+const MenuComp = ({ schoolYears }) => {
   const [openSubMenu, setOpenSubMenu] = useState(null);
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button
-          onMouseEnter={() => setOpenSubMenu(null)}
-          className="inline-flex w-full justify-center gap-x-1.5 bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        >
-          <Bars3Icon
-            className="-mx-1 h-10 w-10 text-gray-400"
-            aria-hidden="true"
-          />
-        </Menu.Button>
-      </div>
+    <Menu as="div" className="relative inline-block text-left w-20">
+      <Menu.Button
+        onMouseEnter={() => setOpenSubMenu(null)}
+        className="inline-flex h-full aspect-square justify-center gap-x-1.5 bg-white text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 rounded"
+      >
+        <Bars3Icon
+          className="-mx-1 h-12 w-12 text-gray-400 my-auto"
+          aria-hidden="true"
+        />
+      </Menu.Button>
 
       <Transition
         as={Fragment}
@@ -64,25 +62,42 @@ const MenuComp = ({ leerjaren }) => {
           className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
         >
           <div className="py-1">
-            {leerjaren.map((jaar) => (
-              <Menu.Item key={jaar}>
+            {[1, 2, 3, 4].map((yearNumber) => (
+              <Menu.Item key={yearNumber}>
                 {({ active }) => (
                   <div className="relative">
-                    <a
-                      href="#"
+                    <div
                       className={classNames(
                         active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                         "block px-4 py-2 text-sm",
                       )}
-                      onMouseEnter={() => setOpenSubMenu(jaar)}
+                      onMouseEnter={() => setOpenSubMenu(yearNumber)}
                     >
-                      {jaar}
-                    </a>
-                    {openSubMenu === jaar && <SubMenu />}
+                      {schoolYears[yearNumber - 1]}
+                    </div>
+                    {openSubMenu === yearNumber && (
+                      <SubMenu year={yearNumber} />
+                    )}
                   </div>
                 )}
               </Menu.Item>
             ))}
+            <Menu.Item key={5}>
+              {({ active }) => (
+                <div className="relative">
+                  <a
+                    href="/portfolio"
+                    className={classNames(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block px-4 py-2 text-sm",
+                    )}
+                    onMouseEnter={() => setOpenSubMenu(null)}
+                  >
+                    Officieel portfolio
+                  </a>
+                </div>
+              )}
+            </Menu.Item>
           </div>
         </Menu.Items>
       </Transition>
