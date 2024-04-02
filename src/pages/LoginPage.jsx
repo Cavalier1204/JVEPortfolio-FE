@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserManager from "../services/UserManager";
+import { useNavigate } from "react-router-dom";
+import TokenManager from "../services/TokenManager";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (TokenManager.getClaims()) {
+      navigate("/");
+    }
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log(username, password);
     UserManager.signin(username, password)
       .then(() => {
         navigate("/");

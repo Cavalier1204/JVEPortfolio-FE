@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { imageUploader } from "../services/Firebase";
 import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
-import saveArtPiece from "../services/ArtPieceManager";
+import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
+import { useNavigate } from "react-router-dom";
 
 const CreatePage = () => {
   // State for form values
@@ -13,6 +14,14 @@ const CreatePage = () => {
   const [module, setModule] = useState(0);
   const [media, setMedia] = useState([]);
   const [subject, setSubject] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!TokenManager.getClaims()) {
+      navigate("/");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,13 +58,13 @@ const CreatePage = () => {
       const artPiece = {
         title,
         description,
-        year,
-        module,
+        year: parseInt(year),
+        module: parseInt(module),
         media: mediaFiles,
         subject,
       };
 
-      const newArtPiece = await saveArtPiece(
+      const newArtPiece = await ArtPieceManager.saveArtPiece(
         artPiece,
         TokenManager.getAccessToken(),
       );

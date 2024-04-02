@@ -19,7 +19,7 @@ const SubMenu = (year) => {
               <a
                 href={`/module/${year.year}/${module}`}
                 className={classNames(
-                  active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                  active ? "bg-gray-200 text-gray-900" : "text-gray-700",
                   "block px-4 py-2 text-sm",
                 )}
               >
@@ -68,7 +68,7 @@ const MenuComp = ({ schoolYears }) => {
                   <div className="relative">
                     <div
                       className={classNames(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                        active ? "bg-gray-200 text-gray-900" : "text-gray-700",
                         "block px-4 py-2 text-sm",
                       )}
                       onMouseEnter={() => setOpenSubMenu(yearNumber)}

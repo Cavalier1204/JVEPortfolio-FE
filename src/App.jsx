@@ -6,6 +6,7 @@ import CreatePage from "./pages/CreateArtPiecePage";
 import ModulePage from "./pages/ModulePage";
 import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
+import SubjectPage from "./pages/SubjectPage";
 
 function App() {
   return (
@@ -19,6 +20,10 @@ function App() {
             <Route path="/module/:year/:module" element={<ModulePage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/module/:year/:module/:subject"
+              element={<SubjectPage />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
