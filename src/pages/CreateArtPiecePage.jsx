@@ -3,6 +3,7 @@ import { imageUploader } from "../services/Firebase";
 import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import saveArtPiece from "../services/ArtPieceManager";
+import TokenManager from "../services/TokenManager";
 
 const CreatePage = () => {
   // State for form values
@@ -54,7 +55,10 @@ const CreatePage = () => {
         subject,
       };
 
-      const newArtPiece = await saveArtPiece(artPiece);
+      const newArtPiece = await saveArtPiece(
+        artPiece,
+        TokenManager.getAccessToken(),
+      );
     }
   };
 

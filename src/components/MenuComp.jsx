@@ -40,10 +40,10 @@ const MenuComp = ({ schoolYears }) => {
     <Menu as="div" className="relative inline-block text-left w-20">
       <Menu.Button
         onMouseEnter={() => setOpenSubMenu(null)}
-        className="inline-flex h-full aspect-square justify-center gap-x-1.5 bg-white text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 rounded"
+        className="inline-flex h-full aspect-square justify-center gap-x-1.5 bg-[#a1a6a2] text-sm font-semibold text-gray-900 shadow-sm  hover:bg-[#8f9490] rounded"
       >
         <Bars3Icon
-          className="-mx-1 h-12 w-12 text-gray-400 my-auto"
+          className="-mx-1 h-12 w-12 text-white my-auto"
           aria-hidden="true"
         />
       </Menu.Button>
