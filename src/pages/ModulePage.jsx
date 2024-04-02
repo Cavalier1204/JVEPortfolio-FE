@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 
 const ModulePage = () => {
-  const { moduleId } = useParams();
+  const { year, module } = useParams();
+  console.log(year + " " + module);
   return (
     <div>
       hey
