@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Times New Roman", Times, serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,4 +27,12 @@
   h4 {
     @apply text-lg font-bold;
   }
+}
+
+.landingline {
+  height: 1px;
+}
+
+.landingline2 {
+  height: 2px;
 }

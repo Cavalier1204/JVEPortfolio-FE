@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import LandingPage from "./pages/Landingpage";
 import CreatePage from "./pages/CreateArtPiecePage";
 import ModulePage from "./pages/ModulePage";
+import PortfolioPage from "./pages/PortfolioPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/upload" element={<CreatePage />} />
             <Route path="/module/:year/:module" element={<ModulePage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
       </BrowserRouter>

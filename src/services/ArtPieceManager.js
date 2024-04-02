@@ -11,7 +11,7 @@ const getArtPiece = async (id) => {
 };
 
 // Get by year by module
-const getManyArtPieces = async (year, module) => {
+const getManyArtPieces = async ({ year, module }) => {
   return await axios
     .get(publicUrl, {
       params: {
