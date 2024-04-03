@@ -13,7 +13,7 @@ const CreatePage = () => {
   const [year, setYear] = useState(0);
   const [module, setModule] = useState(0);
   const [media, setMedia] = useState([]);
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState("WERKPRAKTIJK_1");
 
   const navigate = useNavigate();
 

@@ -1,47 +1,7 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ArtPieceManager from "../services/ArtPieceManager";
-import { getDownloadURL, ref } from "firebase/storage";
-import { imageUploader } from "../services/Firebase";
 
 const ModulePage = () => {
   const { year, module } = useParams();
-  // const [artPieces, setArtPieces] = useState(null);
-  // const [werkPraktijkPieces, setWerkPraktijkPieces] = useState(null);
-  // const [kennisVaardighedenPieces, setKennisVaardighedenPieces] =
-  //   useState(null);
-  // const [positioneringPieces, setPositioneringPieces] = useState(null);
-
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const artPiecesData = await ArtPieceManager.getManyArtPieces({
-  //       year,
-  //       module,
-  //     });
-
-  //     setArtPieces(artPiecesData);
-
-  //     if (artPieces) {
-  //       setWerkPraktijkPieces(
-  //         artPieces.filter(
-  //           (item) =>
-  //             item.subject === "WERKPRAKTIJK_1" ||
-  //             item.subject === "WERKPRAKTIJK_2",
-  //         ),
-  //       );
-  //       setKennisVaardighedenPieces(
-  //         artPieces.filter(
-  //           (item) => item.subject === "THEORIE" || item.subject === "SKILLS",
-  //         ),
-  //       );
-  //       setPositioneringPieces(
-  //         artPieces.filter((item) => item.subject === "POSITIONERING"),
-  //       );
-  //     }
-  //   };
-
-  //   getData();
-  // }, []);
 
   return (
     <div className="container px-5 py-6 mx-auto">
