@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/Landingpage";
 import CreatePage from "./pages/CreateArtPiecePage";
@@ -12,7 +12,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <BrowserRouter>
+      <HashRouter>
         <div className="md:container md:mx-auto flex justify-center pt-5">
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -26,7 +26,7 @@ function App() {
             />
           </Routes>
         </div>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 }
