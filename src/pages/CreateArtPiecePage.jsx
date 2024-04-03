@@ -64,10 +64,34 @@ const CreatePage = () => {
         subject,
       };
 
-      const newArtPiece = await ArtPieceManager.saveArtPiece(
-        artPiece,
-        TokenManager.getAccessToken(),
-      );
+      try {
+        const newArtPiece = await ArtPieceManager.saveArtPiece(
+          artPiece,
+          TokenManager.getAccessToken(),
+        );
+
+        let subjectParam;
+        switch (subject) {
+          case "WERKPRAKTIJK_1":
+          case "WERKPRAKTIJK_2":
+            subjectParam = "werkpraktijk";
+            break;
+          case "THEORIE":
+          case "SKILLS":
+            subjectParam = "kennis";
+            break;
+          case "POSITIONERING":
+            subjectParam = "positionering";
+            break;
+          default:
+            subjectParam = "";
+            break;
+        }
+
+        navigate(`/module/${year}/${module}/${subjectParam}`);
+      } catch (error) {
+        console.error("Error saving art piece:", error);
+      }
     }
   };
 
