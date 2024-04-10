@@ -27,16 +27,21 @@ const SubjectPage = () => {
     };
 
     getData();
-  }, [year, module]); // Add dependencies for useEffect
+  }, [year, module]);
 
   useEffect(() => {
-    // Function to fetch download URL for a piece
-    const fetchDownloadURL = async (piece) => {
-      const downloadUrl = await getDownloadURL(
-        ref(imageUploader, piece.media[0].locationReference),
+    const fetchDownloadURLs = async (piece) => {
+      // if (piece.media.length > 0) {
+      const downloadURLs = await Promise.all(
+        piece.media.map(async (mediaItem) => {
+          return getDownloadURL(
+            ref(imageUploader, mediaItem.locationReference),
+          );
+        }),
       );
-      return { ...piece, downloadUrl }; // Return piece with download URL
+      return { ...piece, downloadURLs };
     };
+    // };
 
     // Filter art pieces when artPieces state updates
     const filterArtPieces = async () => {
@@ -49,7 +54,7 @@ const SubjectPage = () => {
       // Fetch download URLs for all pieces and filter them accordingly
       await Promise.all(
         artPieces.map(async (piece) => {
-          const pieceWithDownloadURL = await fetchDownloadURL(piece);
+          const pieceWithDownloadURL = await fetchDownloadURLs(piece);
           switch (pieceWithDownloadURL.subject) {
             case "WERKPRAKTIJK_1":
               filteredWerkPraktijkPieces1.push(pieceWithDownloadURL);
