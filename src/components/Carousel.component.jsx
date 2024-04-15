@@ -17,7 +17,7 @@ export default function Carousel({ slides, piece }) {
   return (
     <div className="overflow-hidden relative h-full w-full">
       <div
-        className={`flex transition ease-out duration-400 h-full`}
+        className="flex transition ease-out duration-400 h-full"
         style={{
           transform: `translateX(-${(current * 100) / slides.length}%)`,
           width: `${100 * slides.length}%`,
@@ -50,11 +50,11 @@ export default function Carousel({ slides, piece }) {
         ))}
       </div>
 
-      <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1">
-        <button onClick={previousSlide}>
+      <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
+        <button onClick={previousSlide} className="pointer-events-auto">
           <ChevronLeftIcon className="h-5" />
         </button>
-        <button onClick={nextSlide}>
+        <button onClick={nextSlide} className="pointer-events-auto">
           <ChevronRightIcon className="h-5" />
         </button>
       </div>
