@@ -1,18 +1,11 @@
 import Carousel from "../components/Carousel.component";
 
 const PortfolioItem = (props) => {
-  let slides = [
-    "https://flowbite.com/docs/images/carousel/carousel-1.svg",
-    "https://flowbite.com/docs/images/carousel/carousel-2.svg",
-    "https://flowbite.com/docs/images/carousel/carousel-3.svg",
-    "https://flowbite.com/docs/images/carousel/carousel-4.svg",
-    "https://flowbite.com/docs/images/carousel/carousel-5.svg",
-  ];
   return (
     <div className="p-4 md:w-1/3" key={props.piece.id}>
       <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg">
         {props.piece.media.length > 0 && (
-          <div className="lg:h-56 md:h-40">
+          <div className="lg:h-56 md:h-40 bg-gray-100">
             {props.piece.media.length === 1 ? (
               <>
                 {props.piece.media[0].locationReference.startsWith("images") ? (
@@ -52,9 +45,6 @@ const PortfolioItem = (props) => {
         </div>
       </div>
     </div>
-    // <div className="w-64 m-auto">
-    //   <Carousel slides={slides} />
-    // </div>
   );
 };
 
