@@ -41,7 +41,6 @@ const SubjectPage = () => {
       );
       return { ...piece, downloadURLs };
     };
-    // };
 
     // Filter art pieces when artPieces state updates
     const filterArtPieces = async () => {

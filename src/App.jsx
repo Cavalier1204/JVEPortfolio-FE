@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/Landingpage";
 import CreatePage from "./pages/CreateArtPiecePage";
