@@ -11,8 +11,8 @@ import SubjectPage from "./pages/SubjectPage";
 function App() {
   return (
     <>
-      <Navbar />
       <HashRouter>
+        <Navbar />
         <div className="md:container md:mx-auto flex justify-center pt-5">
           <Routes>
             <Route path="/" element={<LandingPage />} />
