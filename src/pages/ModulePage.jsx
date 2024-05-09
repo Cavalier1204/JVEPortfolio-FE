@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ModulePage = () => {
   const { year, module } = useParams();
@@ -6,9 +6,9 @@ const ModulePage = () => {
   return (
     <div className="container px-5 py-6 mx-auto">
       <div className="flex flex-wrap -m-4">
-        <a
+        <Link
           className="p-4 md:w-1/3"
-          href={`/#/module/${year}/${module}/werkpraktijk`}
+          to={`/#/module/${year}/${module}/werkpraktijk`}
         >
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
@@ -28,8 +28,11 @@ const ModulePage = () => {
               </p>
             </div>
           </div>
-        </a>
-        <a className="p-4 md:w-1/3" href={`/#/module/${year}/${module}/kennis`}>
+        </Link>
+        <Link
+          className="p-4 md:w-1/3"
+          to={`/#/module/${year}/${module}/kennis`}
+        >
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
               className="lg:h-48 md:h-36 w-full object-cover object-center"
@@ -48,10 +51,10 @@ const ModulePage = () => {
               </p>
             </div>
           </div>
-        </a>
-        <a
+        </Link>
+        <Link
           className="p-4 md:w-1/3"
-          href={`/#/module/${year}/${module}/positionering`}
+          to={`/#/module/${year}/${module}/positionering`}
         >
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
@@ -71,7 +74,7 @@ const ModulePage = () => {
               </p>
             </div>
           </div>
-        </a>
+        </Link>
       </div>
     </div>
   );
