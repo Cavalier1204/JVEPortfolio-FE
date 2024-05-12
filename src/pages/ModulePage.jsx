@@ -8,7 +8,7 @@ const ModulePage = () => {
       <div className="flex flex-wrap -m-4">
         <Link
           className="p-4 md:w-1/3"
-          to={`/#/module/${year}/${module}/werkpraktijk`}
+          to={`/module/${year}/${module}/werkpraktijk`}
         >
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
@@ -29,10 +29,7 @@ const ModulePage = () => {
             </div>
           </div>
         </Link>
-        <Link
-          className="p-4 md:w-1/3"
-          to={`/#/module/${year}/${module}/kennis`}
-        >
+        <Link className="p-4 md:w-1/3" to={`/module/${year}/${module}/kennis`}>
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
               className="lg:h-48 md:h-36 w-full object-cover object-center"
@@ -54,7 +51,7 @@ const ModulePage = () => {
         </Link>
         <Link
           className="p-4 md:w-1/3"
-          to={`/#/module/${year}/${module}/positionering`}
+          to={`/module/${year}/${module}/positionering`}
         >
           <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
             <img
