@@ -34,7 +34,7 @@ const SubMenu = (year) => {
   );
 };
 
-const MenuComp = ({ schoolYears }) => {
+const DropdownMenu = ({ schoolYears }) => {
   const [openSubMenu, setOpenSubMenu] = useState(null);
 
   return (
@@ -106,4 +106,4 @@ const MenuComp = ({ schoolYears }) => {
   );
 };
 
-export default MenuComp;
+export default DropdownMenu;

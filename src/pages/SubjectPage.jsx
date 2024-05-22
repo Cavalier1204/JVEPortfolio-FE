@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { getDownloadURL, ref } from "firebase/storage";
 import { imageUploader } from "../services/Firebase";
@@ -13,7 +13,6 @@ const SubjectPage = () => {
   const [theoriePieces, setTheoriePieces] = useState([]);
   const [skillsPieces, setSkillsPieces] = useState([]);
   const [positioneringPieces, setPositioneringPieces] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
