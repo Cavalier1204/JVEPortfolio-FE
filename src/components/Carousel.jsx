@@ -52,10 +52,10 @@ export default function Carousel({ slides, piece }) {
 
       <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
         <button onClick={previousSlide} className="pointer-events-auto">
-          <ChevronLeftIcon className="h-5" />
+          <ChevronLeftIcon className="h-10" id="arrow-left" />
         </button>
         <button onClick={nextSlide} className="pointer-events-auto">
-          <ChevronRightIcon className="h-5" />
+          <ChevronRightIcon className="h-10" id="arrow-right" />
         </button>
       </div>
     </div>
