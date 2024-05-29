@@ -5,6 +5,7 @@ import { ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
 import { useNavigate } from "react-router-dom";
+import ImageUploader from "../components/ImageUploaderOrderSelector";
 
 const CreatePage = () => {
   // State for form values
@@ -25,6 +26,7 @@ const CreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    debugger;
 
     if (media !== null) {
       const mediaFiles = [];
@@ -98,7 +100,7 @@ const CreatePage = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-md flex flex-col justify-center"
+      className="w-full max-w-md flex flex-col justify-center mb-10"
     >
       <div className="md:flex md:items-center mb-6">
         <div className="md:w-1/4">
@@ -223,16 +225,7 @@ const CreatePage = () => {
             Media
           </label>
         </div>
-        <div className="md:w-1/2">
-          <input
-            type="file"
-            name="media"
-            id="media"
-            onChange={(e) => setMedia(e.target.files)}
-            multiple
-            className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-          />
-        </div>
+        <ImageUploader images={media} setImages={setMedia} />
       </div>
 
       <button
