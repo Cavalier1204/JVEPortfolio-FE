@@ -29,4 +29,33 @@
   width: 100%;
   height: 100px;
   object-fit: cover;
+  border: 2px solid gray;
+  border-radius: 0.5rem;
+  margin-bottom: 10px;
+}
+
+#modal {
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  overflow-y: auto;
+}
+
+#modal:empty {
+  display: none;
+}
+
+#modal > div {
+  max-width: 50%;
+  min-width: 400px;
+  padding: 15px;
+  text-align: center;
+  margin: auto;
 }

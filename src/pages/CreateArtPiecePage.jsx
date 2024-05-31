@@ -4,7 +4,7 @@ import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageOrderPicker from "../components/ImageOrderPicker";
 
 const CreatePage = () => {
@@ -178,12 +178,20 @@ const CreatePage = () => {
         <ImageOrderPicker images={media} setImages={setMedia} />
       </label>
 
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
-        type="submit"
-      >
-        Opslaan
-      </button>
+      <div className="flex justify-between">
+        <Link
+          className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-1/4"
+          to="/"
+        >
+          Annuleren
+        </Link>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
+          type="submit"
+        >
+          Opslaan
+        </button>
+      </div>
     </form>
   );
 };

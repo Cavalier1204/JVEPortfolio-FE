@@ -1,15 +1,16 @@
 import { arrayMoveImmutable, arrayMoveMutable } from "array-move";
 import { useDropzone } from "react-dropzone";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const SortableItem = SortableElement(({ value, onDelete }) => (
-  <div className="image-item">
+  <div className="image-item z-10">
     <img src={value.preview} alt="Preview" className="image-preview" />
     <button
       onClick={() => onDelete(value)}
-      className="bg-red-600 text-white px-4 py-2 rounded border-2 border-black shadow-md"
+      className="bg-red-600 text-white p-2 rounded border-2 border-black shadow-md trash-icon"
     >
-      Delete
+      <TrashIcon className="h-5 trash-icon" />
     </button>
   </div>
 ));
@@ -50,6 +51,13 @@ const ImageOrderPicker = ({ images, setImages }) => {
     setImages(updatedImages);
   };
 
+  const shouldCancelStart = (event) => {
+    if (event.target.closest(".trash-icon")) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="image-order-picker">
       <div {...getRootProps({ className: "dropzone" })}>
@@ -61,6 +69,7 @@ const ImageOrderPicker = ({ images, setImages }) => {
         onDelete={onDelete}
         onSortEnd={onSortEnd}
         axis="xy"
+        shouldCancelStart={shouldCancelStart}
       />
     </div>
   );

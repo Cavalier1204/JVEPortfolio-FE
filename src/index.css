@@ -49,3 +49,9 @@
   stroke: black;
   stroke-width: 2%;
 }
+
+@layer components {
+  #modal > div {
+    @apply border-2 border-gray-300 border-opacity-60 rounded-lg bg-white my-10;
+  }
+}
