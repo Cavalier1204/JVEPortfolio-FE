@@ -4,6 +4,10 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import ImageOrderPicker from "./ImageOrderPicker";
+import { v4 } from "uuid";
+import { imageUploader } from "../services/Firebase";
+import { deleteObject, ref } from "firebase/storage";
+import ArtPieceManager from "../services/ArtPieceManager";
 
 const PortfolioItem = (props) => {
   const [title, setTitle] = useState(props.piece.title);
@@ -31,6 +35,68 @@ const PortfolioItem = (props) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    let deletedMedia = [];
+    let newMedia = [];
+    props.piece.media.forEach((item) => {
+      if (!media.includes(item)) {
+        const imageRef = ref(imageUploader, item.locationReference);
+        deleteObject(imageRef)
+          .then(() => {
+            deletedMedia.push(item);
+            console.log("deleted successfully");
+          })
+          .catch((e) => console.error(e));
+      }
+    });
+
+    const updatedMedia = media.map(async (mediaItem, index) => {
+      if (mediaItem instanceof File) {
+        const fileType = file.type.split("/")[0];
+
+        let storageRef;
+        if (fileType === "image") {
+          storageRef = ref(imageUploader, `images/${v4()}`);
+        } else if (fileType === "video") {
+          storageRef = ref(imageUploader, `videos/${v4()}`);
+        } else {
+          return;
+        }
+
+        try {
+          const uploadTask = await uploadBytes(storageRef, file);
+          const relativePath = storageRef.fullPath;
+
+          return newMedia.push({
+            locationReference: relativePath,
+            order: index + 1,
+          });
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      } else {
+        return {
+          id: mediaItem.id,
+          artPieceId: mediaItem.artPieceId,
+          createdAt: mediaItem.createdAt,
+          locationReference: mediaItem.locationReference,
+          order: index + 1,
+        };
+      }
+    });
+
+    await ArtPieceManager.updateArtPiece(
+      { title, description, year, module, subject },
+      TokenManager.getAccessToken(),
+    ).catch((error) => console.error(error));
+
+    await ArtPieceManager.updateMedia(
+      piece.id,
+      updatedMedia,
+      deletedMedia,
+      newMedia,
+      TokenManager.getAccessToken(),
+    ).catch((error) => console.error(error));
   };
 
   return (

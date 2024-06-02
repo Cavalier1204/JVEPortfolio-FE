@@ -66,6 +66,36 @@ const deleteArtPiece = async (id, accessToken) => {
   });
 };
 
+// Update
+const updateArtPiece = async (artpiece, accessToken) => {
+  return await axios
+    .put(`${protectedUrl}/artpiece/${artpiece.id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((response) => response.data);
+};
+
+// Update media
+const updateMedia = async (
+  artPieceId,
+  updatedMedia,
+  deletedMedia,
+  newMedia,
+  accessToken,
+) => {
+  return await axios.put(
+    `${protectedUrl}/media/${artPieceId}`,
+    { updatedMedia, deletedMedia, newMedia },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+};
+
 export default {
   getArtPiece,
   getArtPiecesByYearByModule,
@@ -73,4 +103,6 @@ export default {
   getPortfolioPieces,
   saveArtPiece,
   deleteArtPiece,
+  updateArtPiece,
+  updateMedia,
 };

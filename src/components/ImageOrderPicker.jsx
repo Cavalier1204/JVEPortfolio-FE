@@ -6,12 +6,12 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 const SortableItem = SortableElement(({ value, onDelete }) => (
   <div className="image-item z-10">
     <img src={value.preview} alt="Preview" className="image-preview" />
-    <button
+    <div
       onClick={() => onDelete(value)}
-      className="bg-red-600 text-white p-2 rounded border-2 border-black shadow-md trash-icon"
+      className="bg-red-600 text-white p-2 rounded border-2 border-black shadow-md trash-icon w-fit mx-auto"
     >
       <TrashIcon className="h-5 trash-icon" />
-    </button>
+    </div>
   </div>
 ));
 
