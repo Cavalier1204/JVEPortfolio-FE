@@ -67,13 +67,20 @@ const deleteArtPiece = async (id, accessToken) => {
 };
 
 // Update
-const updateArtPiece = async (artpiece, accessToken) => {
+const updateArtPiece = async (
+  { id, title, description, year, module, subject },
+  accessToken,
+) => {
   return await axios
-    .put(`${protectedUrl}/artpiece/${artpiece.id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    .put(
+      `${protectedUrl}/artpiece/${id}`,
+      { title, description, year, module, subject },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    })
+    )
     .then((response) => response.data);
 };
 

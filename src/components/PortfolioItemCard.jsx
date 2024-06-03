@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import ImageOrderPicker from "./ImageOrderPicker";
 import { v4 } from "uuid";
 import { imageUploader } from "../services/Firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
+import { useNavigate } from "react-router-dom";
 
 const PortfolioItem = (props) => {
   const [title, setTitle] = useState(props.piece.title);
@@ -18,6 +19,8 @@ const PortfolioItem = (props) => {
   const [subject, setSubject] = useState(props.piece.subject);
 
   const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMedia(props.piece.media);
@@ -38,65 +41,93 @@ const PortfolioItem = (props) => {
 
     let deletedMedia = [];
     let newMedia = [];
+
     props.piece.media.forEach((item) => {
       if (!media.includes(item)) {
         const imageRef = ref(imageUploader, item.locationReference);
         deleteObject(imageRef)
           .then(() => {
-            deletedMedia.push(item);
+            deletedMedia.push(item.id);
             console.log("deleted successfully");
           })
           .catch((e) => console.error(e));
       }
     });
 
-    const updatedMedia = media.map(async (mediaItem, index) => {
-      if (mediaItem instanceof File) {
-        const fileType = file.type.split("/")[0];
+    const unfilteredUpdatedMedia = await Promise.all(
+      media.map(async (mediaItem, index) => {
+        if (mediaItem instanceof File) {
+          const fileType = mediaItem.type.split("/")[0];
 
-        let storageRef;
-        if (fileType === "image") {
-          storageRef = ref(imageUploader, `images/${v4()}`);
-        } else if (fileType === "video") {
-          storageRef = ref(imageUploader, `videos/${v4()}`);
+          let storageRef;
+          if (fileType === "image") {
+            storageRef = ref(imageUploader, `images/${v4()}`);
+          } else if (fileType === "video") {
+            storageRef = ref(imageUploader, `videos/${v4()}`);
+          } else {
+            return;
+          }
+
+          try {
+            const uploadTask = await uploadBytes(storageRef, mediaItem);
+            const relativePath = storageRef.fullPath;
+
+            newMedia.push({
+              locationReference: relativePath,
+              order: index + 1,
+            });
+            return null;
+          } catch (error) {
+            console.error("Error uploading file:", error);
+          }
         } else {
-          return;
-        }
-
-        try {
-          const uploadTask = await uploadBytes(storageRef, file);
-          const relativePath = storageRef.fullPath;
-
-          return newMedia.push({
-            locationReference: relativePath,
+          return {
+            id: mediaItem.id,
+            artPieceId: mediaItem.artPieceId,
+            createdAt: mediaItem.createdAt,
+            locationReference: mediaItem.locationReference,
             order: index + 1,
-          });
-        } catch (error) {
-          console.error("Error uploading file:", error);
+          };
         }
-      } else {
-        return {
-          id: mediaItem.id,
-          artPieceId: mediaItem.artPieceId,
-          createdAt: mediaItem.createdAt,
-          locationReference: mediaItem.locationReference,
-          order: index + 1,
-        };
-      }
-    });
+      }),
+    );
+
+    const updatedMedia = unfilteredUpdatedMedia.filter((item) => item !== null);
+
+    const id = props.piece.id;
 
     await ArtPieceManager.updateArtPiece(
-      { title, description, year, module, subject },
+      { id, title, description, year, module, subject },
       TokenManager.getAccessToken(),
     ).catch((error) => console.error(error));
 
+    let subjectParam;
+    switch (subject) {
+      case "WERKPRAKTIJK_1":
+      case "WERKPRAKTIJK_2":
+        subjectParam = "werkpraktijk";
+        break;
+      case "THEORIE":
+      case "SKILLS":
+        subjectParam = "kennis";
+        break;
+      case "POSITIONERING":
+        subjectParam = "positionering";
+        break;
+      default:
+        subjectParam = "";
+        break;
+    }
+
     await ArtPieceManager.updateMedia(
-      piece.id,
+      id,
       updatedMedia,
       deletedMedia,
       newMedia,
       TokenManager.getAccessToken(),
-    ).catch((error) => console.error(error));
+    )
+      .then(navigate(`/module/${year}/${module}/${subjectParam}`))
+      .catch((error) => console.error(error));
   };
 
   return (

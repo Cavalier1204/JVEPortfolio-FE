@@ -98,7 +98,7 @@ const SubjectPage = () => {
             );
             return {
               ...piece,
-              media: updatedMedia,
+              media: updatedMedia.sort((a, b) => a.order - b.order),
             };
           }),
         );
