@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Times New Roman", Times, serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: white;
 }
 
 @layer base {
@@ -27,4 +28,24 @@
   h4 {
     @apply text-lg font-bold;
   }
+}
+
+.landingline {
+  height: 1px;
+}
+
+.landingline2 {
+  height: 2px;
+}
+
+#arrow-left path {
+  fill: white;
+  stroke: black;
+  stroke-width: 2%;
+}
+
+#arrow-right path {
+  fill: white;
+  stroke: black;
+  stroke-width: 2%;
 }

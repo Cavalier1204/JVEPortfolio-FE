@@ -1,15 +1,18 @@
-import MenuComp from "./MenuComp";
+import { Link } from "react-router-dom";
+import DropdownMenu from "./DropdownMenu";
 
-let Leerjaren = ["Leerjaar 1", "Leerjaar 2", "Leerjaar 3", "Leerjaar 4"];
+const schoolYears = ["Leerjaar 1", "Leerjaar 2", "Leerjaar 3", "Leerjaar 4"];
 
 const Navbar = () => {
   return (
-    <div className="w-full bg-teal-400 flex">
-      <MenuComp leerjaren={Leerjaren} />
-      <div className="flex-1 w-fit">
-        <h1 className="w-fit">Ontwikkel portfolio</h1>
-        <h2 className="w-fit">Jana van Eijk</h2>
-      </div>
+    <div className="w-full bg-[#b5bab6] flex p-2 shadow-md">
+      <DropdownMenu schoolYears={schoolYears} />
+      <Link className="flex-1 w-fit ps-4" to="/">
+        <h2 className="w-fit text-offwhite drop-shadow-md font-light">
+          Ontwikkelingsportfolio
+        </h2>
+        <h3 className="w-fit text-offwhite drop-shadow-md font-light">JVE</h3>
+      </Link>
     </div>
   );
 };
