@@ -48,7 +48,6 @@ const PortfolioItem = (props) => {
         deleteObject(imageRef)
           .then(() => {
             deletedMedia.push(item.id);
-            console.log("deleted successfully");
           })
           .catch((e) => console.error(e));
       }
