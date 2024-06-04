@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,15 +17,15 @@ const SubMenu = (year) => {
         {[1, 2, 3, 4].map((module) => (
           <Menu.Item key={module}>
             {({ active }) => (
-              <a
-                href={`/#/module/${year.year}/${module}`}
+              <Link
+                to={`/module/${year.year}/${module}`}
                 className={classNames(
                   active ? "bg-gray-200 text-gray-900" : "text-gray-700",
                   "block px-4 py-2 text-sm",
                 )}
               >
                 Module {module}
-              </a>
+              </Link>
             )}
           </Menu.Item>
         ))}
@@ -33,7 +34,7 @@ const SubMenu = (year) => {
   );
 };
 
-const MenuComp = ({ schoolYears }) => {
+const DropdownMenu = ({ schoolYears }) => {
   const [openSubMenu, setOpenSubMenu] = useState(null);
 
   return (
@@ -85,8 +86,8 @@ const MenuComp = ({ schoolYears }) => {
             <Menu.Item key={5}>
               {({ active }) => (
                 <div className="relative">
-                  <a
-                    href="/#/portfolio"
+                  <Link
+                    to="/portfolio"
                     className={classNames(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                       "block px-4 py-2 text-sm",
@@ -94,7 +95,7 @@ const MenuComp = ({ schoolYears }) => {
                     onMouseEnter={() => setOpenSubMenu(null)}
                   >
                     Officieel portfolio
-                  </a>
+                  </Link>
                 </div>
               )}
             </Menu.Item>
@@ -105,4 +106,4 @@ const MenuComp = ({ schoolYears }) => {
   );
 };
 
-export default MenuComp;
+export default DropdownMenu;

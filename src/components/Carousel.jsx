@@ -1,7 +1,7 @@
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 
-export default function Carousel({ slides, piece }) {
+export default function Carousel({ slides }) {
   let [current, setCurrent] = useState(0);
 
   let previousSlide = () => {
@@ -23,26 +23,26 @@ export default function Carousel({ slides, piece }) {
           width: `${100 * slides.length}%`,
         }}
       >
-        {piece.downloadURLs.map((downloadURL, index) => (
+        {slides.map((file, index) => (
           <>
-            {piece.media[index].locationReference.startsWith("images") ? (
+            {file.locationReference.startsWith("images") ? (
               <img
                 className="object-contain object-center h-auto"
-                src={downloadURL}
+                src={file.url}
                 alt={`Image ${index + 1}`}
                 key={index}
                 style={{
                   width: `${100 / slides.length}%`,
                 }}
               />
-            ) : piece.media[index].locationReference.startsWith("videos") ? (
+            ) : file.locationReference.startsWith("videos") ? (
               <video
                 className="object-contain object-center w-full h-auto"
                 controls
                 muted
                 key={index}
               >
-                <source src={downloadURL} type="video/mp4" />
+                <source src={file.url} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             ) : null}
@@ -52,10 +52,10 @@ export default function Carousel({ slides, piece }) {
 
       <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
         <button onClick={previousSlide} className="pointer-events-auto">
-          <ChevronLeftIcon className="h-5" />
+          <ChevronLeftIcon className="h-10" id="arrow-left" />
         </button>
         <button onClick={nextSlide} className="pointer-events-auto">
-          <ChevronRightIcon className="h-5" />
+          <ChevronRightIcon className="h-10" id="arrow-right" />
         </button>
       </div>
     </div>

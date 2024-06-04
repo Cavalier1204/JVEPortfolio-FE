@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ArtPieceManager from "../services/ArtPieceManager";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getBytes, ref } from "firebase/storage";
 import { imageUploader } from "../services/Firebase";
 import PortfolioItem from "../components/PortfolioItemCard";
 
 const SubjectPage = () => {
   const { year, module, subject } = useParams();
   const [artPieces, setArtPieces] = useState([]);
-  const [werkPraktijkPieces1, setWerkPraktijkPieces1] = useState([]);
-  const [werkPraktijkPieces2, setWerkPraktijkPieces2] = useState([]);
-  const [theoriePieces, setTheoriePieces] = useState([]);
-  const [skillsPieces, setSkillsPieces] = useState([]);
-  const [positioneringPieces, setPositioneringPieces] = useState([]);
-  const navigate = useNavigate();
+  const [isMediaConverted, setIsMediaConverted] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await ArtPieceManager.getManyArtPieces({ year, module });
+        const res = await ArtPieceManager.getArtPiecesByYearByModuleBySubject({
+          year,
+          module,
+          subject,
+        });
         setArtPieces(res.data);
+        setIsMediaConverted(false);
       } catch (error) {
         console.error("Error fetching art pieces:", error);
         // Handle error, maybe navigate to an error page
@@ -27,72 +27,92 @@ const SubjectPage = () => {
     };
 
     getData();
-  }, [year, module]);
+  }, [year, module, subject]);
+
+  const fetchPreviewURL = async (locationReference) => {
+    const mediaRef = ref(imageUploader, locationReference);
+    const bytes = await getBytes(mediaRef);
+    const blob = new Blob([bytes]);
+
+    let url;
+    let canvas;
+
+    if (locationReference.startsWith("images/")) {
+      url = URL.createObjectURL(blob);
+
+      const img = document.createElement("img");
+      img.src = url;
+
+      await new Promise((resolve) => {
+        img.onload = resolve;
+      });
+
+      canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 100;
+      canvas.height = 100;
+      ctx.drawImage(img, 0, 0, 100, 100);
+    } else if (locationReference.startsWith("videos/")) {
+      url = URL.createObjectURL(blob);
+
+      const video = document.createElement("video");
+      video.src = url;
+
+      await new Promise((resolve) => {
+        video.onloadeddata = () => {
+          video.currentTime = 1; // seek to 1 second for the thumbnail
+          video.onseeked = resolve;
+        };
+      });
+
+      canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 100;
+      canvas.height = 100;
+      ctx.drawImage(video, 0, 0, 100, 100);
+    }
+
+    const preview = canvas.toDataURL("image/jpeg");
+
+    return { preview, url };
+  };
 
   useEffect(() => {
-    const fetchDownloadURLs = async (piece) => {
-      // if (piece.media.length > 0) {
-      const downloadURLs = await Promise.all(
-        piece.media.map(async (mediaItem) => {
-          return getDownloadURL(
-            ref(imageUploader, mediaItem.locationReference),
-          );
-        }),
-      );
-      return { ...piece, downloadURLs };
-    };
+    if (!isMediaConverted) {
+      const convertMedia = async () => {
+        const updatedArtPieces = await Promise.all(
+          artPieces.map(async (piece) => {
+            const updatedMedia = await Promise.all(
+              piece.media.map(async (mediaItem) => {
+                const { preview, url } = await fetchPreviewURL(
+                  mediaItem.locationReference,
+                );
+                return {
+                  ...mediaItem,
+                  preview,
+                  url,
+                };
+              }),
+            );
+            return {
+              ...piece,
+              media: updatedMedia.sort((a, b) => a.order - b.order),
+            };
+          }),
+        );
+        setIsMediaConverted(true);
+        setArtPieces(updatedArtPieces);
+      };
 
-    // Filter art pieces when artPieces state updates
-    const filterArtPieces = async () => {
-      const filteredWerkPraktijkPieces1 = [];
-      const filteredWerkPraktijkPieces2 = [];
-      const filteredTheoriePieces = [];
-      const filteredSkillsPieces = [];
-      const filteredPositioneringPieces = [];
-
-      // Fetch download URLs for all pieces and filter them accordingly
-      await Promise.all(
-        artPieces.map(async (piece) => {
-          const pieceWithDownloadURL = await fetchDownloadURLs(piece);
-          switch (pieceWithDownloadURL.subject) {
-            case "WERKPRAKTIJK_1":
-              filteredWerkPraktijkPieces1.push(pieceWithDownloadURL);
-              break;
-            case "WERKPRAKTIJK_2":
-              filteredWerkPraktijkPieces2.push(pieceWithDownloadURL);
-              break;
-            case "THEORIE":
-              filteredTheoriePieces.push(pieceWithDownloadURL);
-              break;
-            case "SKILLS":
-              filteredSkillsPieces.push(pieceWithDownloadURL);
-              break;
-            case "POSITIONERING":
-              filteredPositioneringPieces.push(pieceWithDownloadURL);
-              break;
-            default:
-              break;
-          }
-        }),
-      );
-
-      // Update state with filtered pieces
-      setWerkPraktijkPieces1(filteredWerkPraktijkPieces1);
-      setWerkPraktijkPieces2(filteredWerkPraktijkPieces2);
-      setTheoriePieces(filteredTheoriePieces);
-      setSkillsPieces(filteredSkillsPieces);
-      setPositioneringPieces(filteredPositioneringPieces);
-    };
-
-    // Call the filtering function only when artPieces state updates
-    if (artPieces.length > 0) {
-      filterArtPieces();
+      if (artPieces.length > 0) {
+        convertMedia();
+      }
     }
   }, [artPieces]);
 
   return (
     <div className="container px-5 pt-2 pb-10 mx-auto">
-      {subject === "werkpraktijk" && (
+      {subject === "werkpraktijk" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Werkpraktijk 1</h2>
           <div
@@ -101,9 +121,11 @@ const SubjectPage = () => {
           />
           <div className="flex flex-wrap -m-4">
             {/* Render pieces for Werkpraktijk 1 */}
-            {werkPraktijkPieces1.map((piece) => (
-              <PortfolioItem piece={piece} key={piece.id} />
-            ))}
+            {artPieces
+              .filter((piece) => piece.subject == "WERKPRAKTIJK_1")
+              .map((piece) => (
+                <PortfolioItem piece={piece} key={piece.id} />
+              ))}
           </div>
           <h2 className="mx-auto w-fit font-light mt-10">Werkpraktijk 2</h2>
           <div
@@ -112,13 +134,15 @@ const SubjectPage = () => {
           />
           <div className="flex flex-wrap -m-4">
             {/* Render pieces for Werkpraktijk 2 */}
-            {werkPraktijkPieces2.map((piece) => (
-              <PortfolioItem piece={piece} key={piece.id} />
-            ))}
+            {artPieces
+              .filter((piece) => piece.subject == "WERKPRAKTIJK_2")
+              .map((piece) => (
+                <PortfolioItem piece={piece} key={piece.id} />
+              ))}
           </div>
         </>
-      )}
-      {subject === "kennis" && (
+      ) : null}
+      {subject === "kennis" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Theorie</h2>
           <div
@@ -126,10 +150,12 @@ const SubjectPage = () => {
             height={2}
           />
           <div className="flex flex-wrap -m-4">
-            {/* Render pieces for Werkpraktijk 1 */}
-            {theoriePieces.map((piece) => (
-              <PortfolioItem piece={piece} key={piece.id} />
-            ))}
+            {/* Render pieces for Theorie */}
+            {artPieces
+              .filter((piece) => piece.subject == "THEORIE")
+              .map((piece) => (
+                <PortfolioItem piece={piece} key={piece.id} />
+              ))}
           </div>
           <h2 className="mx-auto w-fit font-light mt-10">Skills</h2>
           <div
@@ -137,14 +163,16 @@ const SubjectPage = () => {
             height={2}
           />
           <div className="flex flex-wrap -m-4">
-            {/* Render pieces for Werkpraktijk 2 */}
-            {skillsPieces.map((piece) => (
-              <PortfolioItem piece={piece} key={piece.id} />
-            ))}
+            {/* Render pieces for Skills */}
+            {artPieces
+              .filter((piece) => piece.subject == "SKILLS")
+              .map((piece) => (
+                <PortfolioItem piece={piece} key={piece.id} />
+              ))}
           </div>
         </>
-      )}
-      {subject === "positionering" && (
+      ) : null}
+      {subject === "positionering" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Positionering</h2>
           <div
@@ -153,12 +181,14 @@ const SubjectPage = () => {
           />
           <div className="flex flex-wrap -m-4">
             {/* Render pieces for Positionering */}
-            {positioneringPieces.map((piece) => (
-              <PortfolioItem piece={piece} key={piece.id} />
-            ))}
+            {artPieces
+              .filter((piece) => piece.subject == "POSITIONERING")
+              .map((piece) => (
+                <PortfolioItem piece={piece} key={piece.id} />
+              ))}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
