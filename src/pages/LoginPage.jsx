@@ -12,6 +12,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (TokenManager.getClaims()) {
       navigate("/");
+      window.location.reload();
     }
   }, []);
 
@@ -36,28 +37,28 @@ const LoginPage = () => {
     <form onSubmit={handleLogin} className="w-full max-w-md flex flex-col">
       <h3>Login</h3>
 
-      <label htmlFor="floatingUsername" className="block">
-        Username
+      <label htmlFor="emailAddress" className="block">
+        E-mailadres
         <input
           type="text"
           className="mb-3 w-full"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          placeholder="E-mailadres"
           required
-          id="floatingUsername"
+          id="emailAddress"
         />
       </label>
-      <label htmlFor="floatingPassword" className="block">
-        Password
+      <label htmlFor="password" className="block">
+        Wachtwoord
         <input
           type="password"
           className="mb-3 w-full"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
+          placeholder="Wachtwoord"
           required
-          id="floatingPassword"
+          id="password"
         />
       </label>
       <button

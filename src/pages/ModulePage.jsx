@@ -14,7 +14,7 @@ const ModulePage = () => {
             <img
               className="lg:h-48 md:h-36 w-full object-cover object-center"
               src="/werkpraktijk.png"
-              alt="blog"
+              alt="Werkpraktijk vak"
             />
             <div className="px-6 pb-2 pt-5">
               <h2 className="text-xs title-font font-medium text-gray-400">
@@ -34,7 +34,7 @@ const ModulePage = () => {
             <img
               className="lg:h-48 md:h-36 w-full object-cover object-center"
               src="/kennisvaardigheden.jpg"
-              alt="blog"
+              alt="Kennis en vaardigheden vak"
             />
             <div className="px-6 pb-2 pt-5">
               <h2 className="text-xs title-font font-medium text-gray-400">
@@ -57,7 +57,7 @@ const ModulePage = () => {
             <img
               className="lg:h-48 md:h-36 w-full object-cover object-center"
               src="/positionering.jpg"
-              alt="blog"
+              alt="Positionering vak"
             />
             <div className="px-6 pb-2 pt-5">
               <h2 className="text-xs title-font font-medium text-gray-400">

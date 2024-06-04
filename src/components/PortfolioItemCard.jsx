@@ -11,14 +11,15 @@ import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
+import ArtPieceForm from "./ArtPieceForm";
 
 const PortfolioItem = (props) => {
-  const [title, setTitle] = useState(props.piece.title);
-  const [description, setDescription] = useState(props.piece.description);
-  const [year, setYear] = useState(props.piece.year);
-  const [module, setModule] = useState(props.piece.module);
-  const [media, setMedia] = useState(props.piece.media);
-  const [subject, setSubject] = useState(props.piece.subject);
+  const titleHook = useState(props.piece.title);
+  const descriptionHook = useState(props.piece.description);
+  const yearHook = useState(props.piece.year);
+  const moduleHook = useState(props.piece.module);
+  const mediaHook = useState(props.piece.media);
+  const subjectHook = useState(props.piece.subject);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -27,16 +28,16 @@ const PortfolioItem = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    setMedia(props.piece.media);
+    mediaHook[1](props.piece.media);
   }, [props.piece.media]);
 
   const openEditModal = () => {
-    setTitle(props.piece.title);
-    setDescription(props.piece.description);
-    setYear(props.piece.year);
-    setModule(props.piece.module);
-    setMedia(props.piece.media);
-    setSubject(props.piece.subject);
+    titleHook[1](props.piece.title);
+    descriptionHook[1](props.piece.description);
+    yearHook[1](props.piece.year);
+    moduleHook[1](props.piece.module);
+    mediaHook[1](props.piece.media);
+    subjectHook[1](props.piece.subject);
     setShowEditModal(true);
   };
 
@@ -51,7 +52,7 @@ const PortfolioItem = (props) => {
     let newMedia = [];
 
     props.piece.media.forEach((item) => {
-      if (!media.includes(item)) {
+      if (!mediaHook[0].includes(item)) {
         const imageRef = ref(imageUploader, item.locationReference);
         deleteObject(imageRef)
           .then(() => {
@@ -62,7 +63,7 @@ const PortfolioItem = (props) => {
     });
 
     const unfilteredUpdatedMedia = await Promise.all(
-      media.map(async (mediaItem, index) => {
+      mediaHook[0].map(async (mediaItem, index) => {
         if (mediaItem instanceof File) {
           const fileType = mediaItem.type.split("/")[0];
 
@@ -153,7 +154,9 @@ const PortfolioItem = (props) => {
       })
       .catch((e) => {
         console.log("Error deleting artpiece or media:", e);
-        alert("Een is een fout opgetreden bij het verwijderen van het item.");
+        alert(
+          "Een is een fout opgetreden bij het verwijderen van het item. Probeer het later opnieuw.",
+        );
       });
   };
 
@@ -184,7 +187,7 @@ const PortfolioItem = (props) => {
                 ) : null}
               </>
             ) : (
-              <Carousel slides={props.piece.media} piece={props.piece} />
+              <Carousel slides={props.piece.media} />
             )}
           </div>
         )}
@@ -213,116 +216,17 @@ const PortfolioItem = (props) => {
           ) : null}
           {showEditModal ? (
             <Modal>
-              <h3>Edit portfolio item</h3>
-              <form onSubmit={handleUpdate}>
-                <label
-                  htmlFor="title"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Titel
-                  <input
-                    type="text"
-                    name="title"
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="description"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Beschrijving
-                  <textarea
-                    type="text"
-                    name="description"
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="year"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Leerjaar
-                  <input
-                    type="text"
-                    name="year"
-                    id="year"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="module"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Module
-                  <input
-                    type="text"
-                    name="module"
-                    id="module"
-                    value={module}
-                    onChange={(e) => setModule(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="subject"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Vak
-                  <select
-                    name="subject"
-                    id="subject"
-                    onChange={(e) => setSubject(e.target.value)}
-                    value={subject}
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  >
-                    <option value="WERKPRAKTIJK_1">Werkpraktijk 1</option>
-                    <option value="WERKPRAKTIJK_2">Werkpraktijk 2</option>
-                    <option value="THEORIE">Theorie</option>
-                    <option value="SKILLS">Skills</option>
-                    <option value="POSITIONERING">Positionering</option>
-                    <option value="PORTFOLIO">Officieel portfolio</option>
-                  </select>
-                </label>
-
-                <label
-                  htmlFor="media"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Media
-                  <ImageOrderPicker images={media} setImages={setMedia} />
-                </label>
-
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => setShowEditModal(false)}
-                    className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-1/4"
-                  >
-                    Sluiten
-                  </button>
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
-                    type="submit"
-                  >
-                    Opslaan
-                  </button>
-                </div>
-              </form>
+              <ArtPieceForm
+                onSubmit={handleUpdate}
+                headerText="Portfolio item aanpassen"
+                titleHook={titleHook}
+                descriptionHook={descriptionHook}
+                yearHook={yearHook}
+                moduleHook={moduleHook}
+                subjectHook={subjectHook}
+                mediaHook={mediaHook}
+                onClose={() => setShowEditModal(false)}
+              />
             </Modal>
           ) : null}
           {showDeleteModal ? (
