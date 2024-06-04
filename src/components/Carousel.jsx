@@ -1,7 +1,7 @@
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 
-export default function Carousel({ slides, piece }) {
+export default function Carousel({ slides }) {
   let [current, setCurrent] = useState(0);
 
   let previousSlide = () => {

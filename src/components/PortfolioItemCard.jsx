@@ -1,6 +1,7 @@
 import Carousel from "./Carousel";
 import TokenManager from "../services/TokenManager";
 import { PencilIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import ImageOrderPicker from "./ImageOrderPicker";
@@ -8,32 +9,40 @@ import { v4 } from "uuid";
 import { imageUploader } from "../services/Firebase";
 import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import SubjectEnumToPath from "../services/SubjectParser";
+import ArtPieceForm from "./ArtPieceForm";
 
 const PortfolioItem = (props) => {
-  const [title, setTitle] = useState(props.piece.title);
-  const [description, setDescription] = useState(props.piece.description);
-  const [year, setYear] = useState(props.piece.year);
-  const [module, setModule] = useState(props.piece.module);
-  const [media, setMedia] = useState(props.piece.media);
-  const [subject, setSubject] = useState(props.piece.subject);
+  const titleHook = useState(props.piece.title);
+  const descriptionHook = useState(props.piece.description);
+  const yearHook = useState(props.piece.year);
+  const moduleHook = useState(props.piece.module);
+  const mediaHook = useState(props.piece.media);
+  const subjectHook = useState(props.piece.subject);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    setMedia(props.piece.media);
+    mediaHook[1](props.piece.media);
   }, [props.piece.media]);
 
-  const openModal = () => {
-    setTitle(props.piece.title);
-    setDescription(props.piece.description);
-    setYear(props.piece.year);
-    setModule(props.piece.module);
-    setMedia(props.piece.media);
-    setSubject(props.piece.subject);
-    setShowModal(true);
+  const openEditModal = () => {
+    titleHook[1](props.piece.title);
+    descriptionHook[1](props.piece.description);
+    yearHook[1](props.piece.year);
+    moduleHook[1](props.piece.module);
+    mediaHook[1](props.piece.media);
+    subjectHook[1](props.piece.subject);
+    setShowEditModal(true);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
   };
 
   const handleUpdate = async (e) => {
@@ -43,7 +52,7 @@ const PortfolioItem = (props) => {
     let newMedia = [];
 
     props.piece.media.forEach((item) => {
-      if (!media.includes(item)) {
+      if (!mediaHook[0].includes(item)) {
         const imageRef = ref(imageUploader, item.locationReference);
         deleteObject(imageRef)
           .then(() => {
@@ -54,7 +63,7 @@ const PortfolioItem = (props) => {
     });
 
     const unfilteredUpdatedMedia = await Promise.all(
-      media.map(async (mediaItem, index) => {
+      mediaHook[0].map(async (mediaItem, index) => {
         if (mediaItem instanceof File) {
           const fileType = mediaItem.type.split("/")[0];
 
@@ -100,23 +109,7 @@ const PortfolioItem = (props) => {
       TokenManager.getAccessToken(),
     ).catch((error) => console.error(error));
 
-    let subjectParam;
-    switch (subject) {
-      case "WERKPRAKTIJK_1":
-      case "WERKPRAKTIJK_2":
-        subjectParam = "werkpraktijk";
-        break;
-      case "THEORIE":
-      case "SKILLS":
-        subjectParam = "kennis";
-        break;
-      case "POSITIONERING":
-        subjectParam = "positionering";
-        break;
-      default:
-        subjectParam = "";
-        break;
-    }
+    const subjectParam = SubjectEnumToPath(subject);
 
     await ArtPieceManager.updateMedia(
       id,
@@ -125,8 +118,46 @@ const PortfolioItem = (props) => {
       newMedia,
       TokenManager.getAccessToken(),
     )
-      .then(navigate(`/module/${year}/${module}/${subjectParam}`))
+      .then(() => {
+        const url = `/module/${props.piece.year}/${props.piece.module}/${subjectParam}`;
+        if (location.pathname === url) {
+          window.location.reload();
+        } else {
+          navigate(url);
+        }
+      })
       .catch((error) => console.error(error));
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    const subjectParam = SubjectEnumToPath(props.piece.subject);
+
+    await ArtPieceManager.deleteArtPiece(
+      props.piece.id,
+      TokenManager.getAccessToken(),
+    )
+      .then(
+        props.piece.media.forEach((item) => {
+          const imageRef = ref(imageUploader, item.locationReference);
+          deleteObject(imageRef).catch((e) => console.error(e));
+        }),
+      )
+      .then(() => {
+        const url = `/module/${props.piece.year}/${props.piece.module}/${subjectParam}`;
+        if (location.pathname === url) {
+          window.location.reload();
+        } else {
+          navigate(url);
+        }
+      })
+      .catch((e) => {
+        console.log("Error deleting artpiece or media:", e);
+        alert(
+          "Een is een fout opgetreden bij het verwijderen van het item. Probeer het later opnieuw.",
+        );
+      });
   };
 
   return (
@@ -156,7 +187,7 @@ const PortfolioItem = (props) => {
                 ) : null}
               </>
             ) : (
-              <Carousel slides={props.piece.media} piece={props.piece} />
+              <Carousel slides={props.piece.media} />
             )}
           </div>
         )}
@@ -168,122 +199,55 @@ const PortfolioItem = (props) => {
             {props.piece.description}
           </p>
           {TokenManager.getClaims() ? (
-            <div
-              className="hidden group-hover:block absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6"
-              onClick={() => openModal()}
-            >
-              <PencilIcon className="h-6" />
-            </div>
+            <>
+              <div
+                className="hidden group-hover:block absolute p-2 border-black border-solid border-2 rounded bg-red-600 hover:bg-red-700 bottom-6 left-6 text-white"
+                onClick={() => openDeleteModal()}
+              >
+                <TrashIcon className="h-6" />
+              </div>
+              <div
+                className="hidden group-hover:block absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6"
+                onClick={() => openEditModal()}
+              >
+                <PencilIcon className="h-6" />
+              </div>
+            </>
           ) : null}
-          {showModal ? (
+          {showEditModal ? (
             <Modal>
-              <h3>Edit portfolio item</h3>
-              <form onSubmit={handleUpdate}>
-                <label
-                  htmlFor="title"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Titel
-                  <input
-                    type="text"
-                    name="title"
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="description"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Beschrijving
-                  <textarea
-                    type="text"
-                    name="description"
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="year"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Leerjaar
-                  <input
-                    type="text"
-                    name="year"
-                    id="year"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="module"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Module
-                  <input
-                    type="text"
-                    name="module"
-                    id="module"
-                    value={module}
-                    onChange={(e) => setModule(e.target.value)}
-                    required
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  />
-                </label>
-
-                <label
-                  htmlFor="subject"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Vak
-                  <select
-                    name="subject"
-                    id="subject"
-                    onChange={(e) => setSubject(e.target.value)}
-                    value={subject}
-                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                  >
-                    <option value="WERKPRAKTIJK_1">Werkpraktijk 1</option>
-                    <option value="WERKPRAKTIJK_2">Werkpraktijk 2</option>
-                    <option value="THEORIE">Theorie</option>
-                    <option value="SKILLS">Skills</option>
-                    <option value="POSITIONERING">Positionering</option>
-                    <option value="PORTFOLIO">Officieel portfolio</option>
-                  </select>
-                </label>
-
-                <label
-                  htmlFor="media"
-                  className="block text-gray-500 font-bold mb-5"
-                >
-                  Media
-                  <ImageOrderPicker images={media} setImages={setMedia} />
-                </label>
-
+              <ArtPieceForm
+                onSubmit={handleUpdate}
+                headerText="Portfolio item aanpassen"
+                titleHook={titleHook}
+                descriptionHook={descriptionHook}
+                yearHook={yearHook}
+                moduleHook={moduleHook}
+                subjectHook={subjectHook}
+                mediaHook={mediaHook}
+                onClose={() => setShowEditModal(false)}
+              />
+            </Modal>
+          ) : null}
+          {showDeleteModal ? (
+            <Modal>
+              <h3>Portfolio item verwijderen</h3>
+              <form onSubmit={handleDelete}>
+                <h4 className="font-normal my-5">
+                  Weet je zeker dat je dit item wilt verwijderen?
+                </h4>
                 <div className="flex justify-between">
                   <button
-                    onClick={() => setShowModal(false)}
-                    className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-1/4"
+                    onClick={() => setShowDeleteModal(false)}
+                    className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-fit"
                   >
-                    Sluiten
+                    Annuleren
                   </button>
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
+                    className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
                     type="submit"
                   >
-                    Opslaan
+                    Verwijderen
                   </button>
                 </div>
               </form>

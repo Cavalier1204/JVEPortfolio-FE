@@ -47,19 +47,26 @@ const getPortfolioPieces = async () => {
 };
 
 // Save
-const saveArtPiece = async (artpiece, accessToken) => {
+const saveArtPiece = async (
+  { title, description, year, module, subject, media },
+  accessToken,
+) => {
   return await axios
-    .post(protectedUrl, artpiece, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    .post(
+      `${protectedUrl}/artpiece`,
+      { title, description, year, module, subject, media },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    })
+    )
     .then((response) => response.data);
 };
 
 // Delete
 const deleteArtPiece = async (id, accessToken) => {
-  return await axios.delete(`${protectedUrl}/${id}`, {
+  return await axios.delete(`${protectedUrl}/artpiece/${id}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

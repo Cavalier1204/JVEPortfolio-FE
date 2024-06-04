@@ -34,10 +34,12 @@ const SubjectPage = () => {
     const bytes = await getBytes(mediaRef);
     const blob = new Blob([bytes]);
 
-    if (locationReference.startsWith("images/")) {
-      const url = URL.createObjectURL(blob);
+    let url;
+    let canvas;
 
-      // Create a 100px square preview URL
+    if (locationReference.startsWith("images/")) {
+      url = URL.createObjectURL(blob);
+
       const img = document.createElement("img");
       img.src = url;
 
@@ -45,17 +47,13 @@ const SubjectPage = () => {
         img.onload = resolve;
       });
 
-      const canvas = document.createElement("canvas");
+      canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = 100;
       canvas.height = 100;
       ctx.drawImage(img, 0, 0, 100, 100);
-
-      const previewURL = canvas.toDataURL("image/jpeg");
-
-      return { preview: previewURL, url };
     } else if (locationReference.startsWith("videos/")) {
-      const url = URL.createObjectURL(blob);
+      url = URL.createObjectURL(blob);
 
       const video = document.createElement("video");
       video.src = url;
@@ -67,16 +65,16 @@ const SubjectPage = () => {
         };
       });
 
-      const canvas = document.createElement("canvas");
+      canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = 100;
       canvas.height = 100;
       ctx.drawImage(video, 0, 0, 100, 100);
-
-      const previewURL = canvas.toDataURL("image/jpeg");
-
-      return { preview: previewURL, url };
     }
+
+    const preview = canvas.toDataURL("image/jpeg");
+
+    return { preview, url };
   };
 
   useEffect(() => {
@@ -114,7 +112,7 @@ const SubjectPage = () => {
 
   return (
     <div className="container px-5 pt-2 pb-10 mx-auto">
-      {subject === "werkpraktijk" && (
+      {subject === "werkpraktijk" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Werkpraktijk 1</h2>
           <div
@@ -143,8 +141,8 @@ const SubjectPage = () => {
               ))}
           </div>
         </>
-      )}
-      {subject === "kennis" && (
+      ) : null}
+      {subject === "kennis" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Theorie</h2>
           <div
@@ -173,8 +171,8 @@ const SubjectPage = () => {
               ))}
           </div>
         </>
-      )}
-      {subject === "positionering" && (
+      ) : null}
+      {subject === "positionering" ? (
         <>
           <h2 className="mx-auto w-fit font-light">Positionering</h2>
           <div
@@ -190,7 +188,7 @@ const SubjectPage = () => {
               ))}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
