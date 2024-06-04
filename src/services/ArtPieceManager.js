@@ -59,7 +59,7 @@ const saveArtPiece = async (artpiece, accessToken) => {
 
 // Delete
 const deleteArtPiece = async (id, accessToken) => {
-  return await axios.delete(`${protectedUrl}/${id}`, {
+  return await axios.delete(`${protectedUrl}/artpiece/${id}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
