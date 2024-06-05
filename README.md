@@ -29,4 +29,6 @@ React using Vite, styled using TailwindCSS and media stored using Firebase Stora
 
 ## Related
 
-[Backend API](https://github.com/Cavalier1204/JVEPortfolio-BE)
+[Hosted website](https://i511801.luna.fhict.nl/)
+
+[Backend repo](https://github.com/Cavalier1204/JVEPortfolio-BE)
