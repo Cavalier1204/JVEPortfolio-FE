@@ -103,6 +103,11 @@ const PortfolioItem = (props) => {
     const updatedMedia = unfilteredUpdatedMedia.filter((item) => item !== null);
 
     const id = props.piece.id;
+    const title = titleHook[0];
+    const description = descriptionHook[0];
+    const year = parseInt(yearHook[0]);
+    const module = parseInt(moduleHook[0]);
+    const subject = subjectHook[0];
 
     await ArtPieceManager.updateArtPiece(
       { id, title, description, year, module, subject },
@@ -119,7 +124,7 @@ const PortfolioItem = (props) => {
       TokenManager.getAccessToken(),
     )
       .then(() => {
-        const url = `/module/${props.piece.year}/${props.piece.module}/${subjectParam}`;
+        const url = `/module/${year}/${module}/${subjectParam}`;
         if (location.pathname === url) {
           window.location.reload();
         } else {

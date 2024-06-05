@@ -24,20 +24,22 @@ export default function Carousel({ slides }) {
         }}
       >
         {slides.map((file, index) => (
-          <>
+          <div
+            key={index}
+            style={{
+              width: `${100 / slides.length}%`,
+            }}
+          >
             {file.locationReference.startsWith("images") ? (
               <img
-                className="object-contain object-center h-auto"
+                className="object-contain object-center h-full mx-auto"
                 src={file.url}
                 alt={`Image ${index + 1}`}
                 key={index}
-                style={{
-                  width: `${100 / slides.length}%`,
-                }}
               />
             ) : file.locationReference.startsWith("videos") ? (
               <video
-                className="object-contain object-center w-full h-auto"
+                className="object-contain object-center h-full mx-auto"
                 controls
                 muted
                 key={index}
@@ -46,7 +48,7 @@ export default function Carousel({ slides }) {
                 Your browser does not support the video tag.
               </video>
             ) : null}
-          </>
+          </div>
         ))}
       </div>
 
