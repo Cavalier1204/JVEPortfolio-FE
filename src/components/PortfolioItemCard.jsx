@@ -12,6 +12,9 @@ import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
+import Zoom from "react-medium-image-zoom";
+import "../styles.css";
+import { fetchPreviewURL } from "../services/MediaUtils";
 
 const PortfolioItem = (props) => {
   const titleHook = useState(props.piece.title);
@@ -23,9 +26,37 @@ const PortfolioItem = (props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [isMediaConverted, setIsMediaConverted] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!isMediaConverted) {
+      const convertMedia = async () => {
+        const updatedMedia = await Promise.all(
+          props.piece.media.map(async (mediaItem) => {
+            const { preview, url } = await fetchPreviewURL(
+              mediaItem.locationReference,
+            );
+            return {
+              ...mediaItem,
+              preview,
+              url,
+            };
+          }),
+        );
+        setIsMediaConverted(true);
+        props.piece.media = updatedMedia;
+        mediaHook[1](updatedMedia);
+      };
+
+      if (props.piece.media.length > 0) {
+        convertMedia();
+      }
+    }
+  }, [props.piece.media]);
 
   useEffect(() => {
     mediaHook[1](props.piece.media);
@@ -173,11 +204,13 @@ const PortfolioItem = (props) => {
             {props.piece.media.length === 1 ? (
               <>
                 {props.piece.media[0].locationReference.startsWith("images") ? (
-                  <img
-                    className="object-contain object-center w-full h-full"
-                    src={props.piece.media[0].url}
-                    alt={`Image 1`}
-                  />
+                  <Zoom>
+                    <img
+                      className="object-contain object-center w-full h-full"
+                      src={props.piece.media[0].url}
+                      alt={`Image 1`}
+                    />
+                  </Zoom>
                 ) : props.piece.media[0].locationReference.startsWith(
                     "videos",
                   ) ? (
