@@ -225,10 +225,7 @@ const PortfolioItem = (props) => {
                 ) : null}
               </>
             ) : (
-              <Carousel
-                slides={props.piece.media}
-                // handleImageOpen={() => setShowImageModal(true)}
-              />
+              <Carousel slides={props.piece.media} />
             )}
           </div>
         )}
