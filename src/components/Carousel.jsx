@@ -1,5 +1,7 @@
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 export default function Carousel({ slides }) {
   let [current, setCurrent] = useState(0);
@@ -31,12 +33,14 @@ export default function Carousel({ slides }) {
             }}
           >
             {file.locationReference.startsWith("images") ? (
-              <img
-                className="object-contain object-center h-full mx-auto"
-                src={file.url}
-                alt={`Image ${index + 1}`}
-                key={index}
-              />
+              <Zoom>
+                <img
+                  className="object-contain object-center h-full mx-auto cursor-zoom-in"
+                  src={file.url}
+                  alt={`Image ${index + 1}`}
+                  key={index}
+                />
+              </Zoom>
             ) : file.locationReference.startsWith("videos") ? (
               <video
                 className="object-contain object-center h-full mx-auto"

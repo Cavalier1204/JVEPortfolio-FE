@@ -12,6 +12,8 @@ import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
+import Zoom from "react-medium-image-zoom";
+import "../styles.css";
 
 const PortfolioItem = (props) => {
   const titleHook = useState(props.piece.title);
@@ -23,6 +25,7 @@ const PortfolioItem = (props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -173,11 +176,13 @@ const PortfolioItem = (props) => {
             {props.piece.media.length === 1 ? (
               <>
                 {props.piece.media[0].locationReference.startsWith("images") ? (
-                  <img
-                    className="object-contain object-center w-full h-full"
-                    src={props.piece.media[0].url}
-                    alt={`Image 1`}
-                  />
+                  <Zoom>
+                    <img
+                      className="object-contain object-center w-full h-full"
+                      src={props.piece.media[0].url}
+                      alt={`Image 1`}
+                    />
+                  </Zoom>
                 ) : props.piece.media[0].locationReference.startsWith(
                     "videos",
                   ) ? (
@@ -192,7 +197,10 @@ const PortfolioItem = (props) => {
                 ) : null}
               </>
             ) : (
-              <Carousel slides={props.piece.media} />
+              <Carousel
+                slides={props.piece.media}
+                // handleImageOpen={() => setShowImageModal(true)}
+              />
             )}
           </div>
         )}
