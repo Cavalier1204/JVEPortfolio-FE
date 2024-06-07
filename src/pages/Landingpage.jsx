@@ -13,12 +13,32 @@ const LandingPage = () => {
         <br />
         <p>
           Mijn naam is Jana van Eijk en ik ben een student aan de Kunstacademie
-          St Joost in Breda, waar ik de richting Photograph, Film and the
-          Digital volg. Mijn passie ligt bij het verbeelden van verhalen en
-          emoties, en het geven van een stem aan degenen die vaak over het hoofd
-          worden gezien. Mijn reis als filmmaker draait om zelfontdekking en het
-          vinden van mijn unieke bijdrage aan de kunstwereld.
+          St Joost in Breda, waar ik de richting Fotografie, Film en Digital
+          volg.
         </p>
+
+        <br />
+        <p>
+          Als maker van beeld en inhoud koester ik een diepgaand bewustzijn van
+          de noodzaak om een stem te geven aan degenen die niet worden gezien of
+          gehoord in onze samenleving. Mijn werk fungeert als een platform voor
+          mensen die vaak worden genegeerd of gemarginaliseerd, en als een bron
+          van troost en herkenning voor degenen die leven met angst voor hun
+          gevoelens, gedachten en ervaringen.
+        </p>
+
+        <br />
+        <p>
+          Ik maak gebruik van verschillende media, afhankelijk van het verhaal
+          en doel. Mijn meest gebruikte medium is film. Ik geloof dat film de
+          diepere gedachten en gevoelens kan overbrengen die bij andere media
+          moeilijker te bereiken zijn zonder te vervallen in abstractie. Mijn
+          inspiratie komt voort uit mijn sterke emoties tegen de oneerlijkheid
+          in de wereld. Dit spoort me aan om op te komen voor degenen in een
+          kwetsbare positie en om de redenen achter de ongelijkheid in macht te
+          onderzoeken.
+        </p>
+
         <br />
         <p>
           Door middel van deze website wil ik mijn ontwikkeling gedurende mijn
