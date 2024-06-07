@@ -26,7 +26,6 @@ const PortfolioItem = (props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
   const [isMediaConverted, setIsMediaConverted] = useState(false);
 
   const navigate = useNavigate();
@@ -218,11 +217,12 @@ const PortfolioItem = (props) => {
                     className="object-contain object-center w-full h-full"
                     controls
                     muted
-                  >
-                    <source src={props.piece.media[0].url} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : null}
+                    src={props.piece.media[0].url}
+                  />
+                ) : //    <source type="video/mp4" />
+                //   Your browser does not support the video tag.
+                //  </video>
+                null}
               </>
             ) : (
               <Carousel slides={props.piece.media} />

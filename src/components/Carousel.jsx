@@ -47,11 +47,12 @@ export default function Carousel({ slides }) {
                 controls
                 muted
                 key={index}
-              >
-                <source src={file.url} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            ) : null}
+                src={file.url}
+              />
+            ) : //   <source  type="video/mp4" />
+            //   Your browser does not support the video tag.
+            // </video>
+            null}
           </div>
         ))}
       </div>

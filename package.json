@@ -1,6 +1,6 @@
 {
   "name": "foefie-portfolio",
-  "version": "1.2",
+  "version": "1.2.1",
   "main": "index.html",
   "type": "module",
   "scripts": {
