@@ -17,6 +17,8 @@ const CreatePage = () => {
   const mediaHook = useState([]);
   const subjectHook = useState("WERKPRAKTIJK_1");
 
+  const loadingHook = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +29,8 @@ const CreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
+    debugger;
 
     if (mediaHook[0] !== null) {
       const mediaFiles = [];
@@ -36,9 +40,9 @@ const CreatePage = () => {
 
         let storageRef;
         if (fileType === "image") {
-          storageRef = ref(imageUploader, `images/${v4()}`);
+          storageRef = ref(imageUploader, `images/${v4()}.jpg`);
         } else if (fileType === "video") {
-          storageRef = ref(imageUploader, `videos/${v4()}`);
+          storageRef = ref(imageUploader, `videos/${v4()}.mp4`);
         } else {
           continue;
         }
@@ -53,6 +57,7 @@ const CreatePage = () => {
           });
         } catch (error) {
           console.error("Error uploading file:", error);
+          loadingHook[1](true);
         }
       }
 
@@ -73,6 +78,7 @@ const CreatePage = () => {
         navigate(`/module/${year}/${module}/${subjectParam}`);
       } catch (error) {
         console.error("Error saving art piece:", error);
+        loadingHook[1](true);
       }
     }
   };
@@ -89,6 +95,7 @@ const CreatePage = () => {
         subjectHook={subjectHook}
         mediaHook={mediaHook}
         onClose={() => navigate("/")}
+        loadingHook={loadingHook}
       />
     </div>
   );

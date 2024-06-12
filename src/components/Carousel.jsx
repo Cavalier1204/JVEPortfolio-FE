@@ -35,6 +35,7 @@ export default function Carousel({ slides }) {
             {file.locationReference.startsWith("images") ? (
               <Zoom>
                 <img
+                  loading="lazy"
                   className="object-contain object-center h-full mx-auto cursor-zoom-in"
                   src={file.url}
                   alt={`Image ${index + 1}`}
@@ -43,6 +44,7 @@ export default function Carousel({ slides }) {
               </Zoom>
             ) : file.locationReference.startsWith("videos") ? (
               <video
+                loading="lazy"
                 className="object-contain object-center h-full mx-auto"
                 controls
                 muted

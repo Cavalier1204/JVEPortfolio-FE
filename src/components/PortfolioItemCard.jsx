@@ -4,7 +4,6 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
-import ImageOrderPicker from "./ImageOrderPicker";
 import { v4 } from "uuid";
 import { imageUploader } from "../services/Firebase";
 import { deleteObject, ref, uploadBytes } from "firebase/storage";
@@ -30,6 +29,7 @@ const PortfolioItem = (props) => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const loadingHook = useState(false);
 
   useEffect(() => {
     if (!isMediaConverted) {
@@ -77,6 +77,7 @@ const PortfolioItem = (props) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
 
     let deletedMedia = [];
     let newMedia = [];
@@ -99,9 +100,9 @@ const PortfolioItem = (props) => {
 
           let storageRef;
           if (fileType === "image") {
-            storageRef = ref(imageUploader, `images/${v4()}`);
+            storageRef = ref(imageUploader, `images/${v4()}.jpg`);
           } else if (fileType === "video") {
-            storageRef = ref(imageUploader, `videos/${v4()}`);
+            storageRef = ref(imageUploader, `videos/${v4()}.mp4`);
           } else {
             return;
           }
@@ -142,7 +143,10 @@ const PortfolioItem = (props) => {
     await ArtPieceManager.updateArtPiece(
       { id, title, description, year, module, subject },
       TokenManager.getAccessToken(),
-    ).catch((error) => console.error(error));
+    ).catch((error) => {
+      console.error(error);
+      loadingHook[1](false);
+    });
 
     const subjectParam = SubjectEnumToPath(subject);
 
@@ -161,11 +165,15 @@ const PortfolioItem = (props) => {
           navigate(url);
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        loadingHook[1](false);
+      });
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
 
     const subjectParam = SubjectEnumToPath(props.piece.subject);
 
@@ -188,7 +196,8 @@ const PortfolioItem = (props) => {
         }
       })
       .catch((e) => {
-        console.log("Error deleting artpiece or media:", e);
+        console.error("Error deleting artpiece or media:", e);
+        loadingHook[1](false);
         alert(
           "Een is een fout opgetreden bij het verwijderen van het item. Probeer het later opnieuw.",
         );
@@ -205,6 +214,7 @@ const PortfolioItem = (props) => {
                 {props.piece.media[0].locationReference.startsWith("images") ? (
                   <Zoom>
                     <img
+                      loading="lazy"
                       className="object-contain object-center w-full h-full"
                       src={props.piece.media[0].url}
                       alt={`Image 1`}
@@ -214,15 +224,13 @@ const PortfolioItem = (props) => {
                     "videos",
                   ) ? (
                   <video
+                    loading="lazy"
                     className="object-contain object-center w-full h-full"
                     controls
                     muted
                     src={props.piece.media[0].url}
                   />
-                ) : //    <source type="video/mp4" />
-                //   Your browser does not support the video tag.
-                //  </video>
-                null}
+                ) : null}
               </>
             ) : (
               <Carousel slides={props.piece.media} />
@@ -264,6 +272,7 @@ const PortfolioItem = (props) => {
                 subjectHook={subjectHook}
                 mediaHook={mediaHook}
                 onClose={() => setShowEditModal(false)}
+                loadingHook={loadingHook}
               />
             </Modal>
           ) : null}
@@ -281,12 +290,40 @@ const PortfolioItem = (props) => {
                   >
                     Annuleren
                   </button>
-                  <button
-                    className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
-                    type="submit"
-                  >
-                    Verwijderen
-                  </button>
+                  {loadingHook[0] ? (
+                    <button
+                      type="button"
+                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit flex cursor-not-allowed"
+                      disabled
+                    >
+                      <svg
+                        className="animate-spin h-5 w-5 mr-3"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                      Verwijderen...
+                    </button>
+                  ) : (
+                    <button
+                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
+                      type="submit"
+                    >
+                      Verwijderen
+                    </button>
+                  )}
                 </div>
               </form>
             </Modal>

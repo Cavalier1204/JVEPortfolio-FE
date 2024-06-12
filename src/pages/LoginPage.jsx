@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import UserManager from "../services/UserManager";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import TokenManager from "../services/TokenManager";
 
 const LoginPage = () => {
@@ -8,6 +8,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (TokenManager.getClaims()) {
@@ -18,6 +19,7 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     UserManager.signin(username, password)
       .then(() => {
@@ -25,8 +27,9 @@ const LoginPage = () => {
       })
       .catch((error) => {
         console.error(error);
+        setIsLoading(false);
         if (error.response && error.response.status === 401) {
-          alert("Your credentials are incorrect!");
+          alert("Gebruikersnaam en/of wachtwoord incorrect.");
         } else {
           alert("An error occurred!");
         }
@@ -61,12 +64,37 @@ const LoginPage = () => {
           id="password"
         />
       </label>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md"
-      >
-        Login
-      </button>
+      {isLoading ? (
+        <button
+          type="button"
+          className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md flex justify-center cursor-not-allowed"
+          disabled
+        >
+          <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+          Laden...
+        </button>
+      ) : (
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md"
+          type="submit"
+        >
+          Login
+        </button>
+      )}
     </form>
   );
 };
