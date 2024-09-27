@@ -2,7 +2,7 @@ const LandingPage = () => {
   return (
     <div className="w-full flex flex-col justify-center mb-10">
       <img
-        src="/04a5c76b-ccd9-47d2-8f09-fd05050725ab.jpg"
+        src="/artist_photo.jpg"
         className="rounded mx-auto mb-10 mt-5"
         height={400}
         width={400}
