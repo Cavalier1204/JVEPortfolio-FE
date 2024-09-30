@@ -83,6 +83,7 @@ const CreatePage = () => {
     }
   };
 
+  if (TokenManager.getClaims()) {
   return (
     <div className="w-full max-w-md flex flex-col justify-center mb-10">
       <ArtPieceForm
@@ -99,6 +100,9 @@ const CreatePage = () => {
       />
     </div>
   );
+  } else {
+    return <Navigate to="/login" />;
+  }
 };
 
 export default CreatePage;
