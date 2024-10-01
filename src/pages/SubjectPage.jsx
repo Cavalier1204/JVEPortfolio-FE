@@ -43,7 +43,7 @@ const SubjectPage = () => {
             className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
             height={2}
           />
-          <div className="flex flex-wrap -m-4">
+          <div className="flex flex-wrap -m-4 justify-center">
             {artPieces
               .filter((piece) => piece.subject == enumName)
               .map((piece) => (

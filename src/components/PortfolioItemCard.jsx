@@ -11,17 +11,16 @@ import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
-import Zoom from "react-medium-image-zoom";
 import "../styles.css";
 import { fetchPreviewURL } from "../services/MediaUtils";
 
-const PortfolioItem = (props) => {
-  const titleHook = useState(props.piece.title);
-  const descriptionHook = useState(props.piece.description);
-  const yearHook = useState(props.piece.year);
-  const moduleHook = useState(props.piece.module);
-  const mediaHook = useState(props.piece.media);
-  const subjectHook = useState(props.piece.subject);
+const PortfolioItem = ({ piece }) => {
+  const titleHook = useState(piece.title);
+  const descriptionHook = useState(piece.description);
+  const yearHook = useState(piece.year);
+  const moduleHook = useState(piece.module);
+  const mediaHook = useState(piece.media);
+  const subjectHook = useState(piece.subject);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -34,40 +33,40 @@ const PortfolioItem = (props) => {
   useEffect(() => {
     if (!isMediaConverted) {
       const convertMedia = async () => {
-        const updatedMedia = await Promise.all(
-          props.piece.media.map(async (mediaItem) => {
+        const updatedMedia = [];
+        for (const mediaItem of piece.media) {
             const { preview, url } = await fetchPreviewURL(
               mediaItem.locationReference,
             );
-            return {
+          updatedMedia.push({
               ...mediaItem,
               preview,
               url,
-            };
-          }),
-        );
+          });
+        }
+
         setIsMediaConverted(true);
-        props.piece.media = updatedMedia;
+        piece.media = updatedMedia;
         mediaHook[1](updatedMedia);
       };
 
-      if (props.piece.media.length > 0) {
+      if (piece.media.length > 0) {
         convertMedia();
       }
     }
-  }, [props.piece.media]);
+  }, [piece.media]);
 
   useEffect(() => {
-    mediaHook[1](props.piece.media);
-  }, [props.piece.media]);
+    mediaHook[1](piece.media);
+  }, [piece.media]);
 
   const openEditModal = () => {
-    titleHook[1](props.piece.title);
-    descriptionHook[1](props.piece.description);
-    yearHook[1](props.piece.year);
-    moduleHook[1](props.piece.module);
-    mediaHook[1](props.piece.media);
-    subjectHook[1](props.piece.subject);
+    titleHook[1](piece.title);
+    descriptionHook[1](piece.description);
+    yearHook[1](piece.year);
+    moduleHook[1](piece.module);
+    mediaHook[1](piece.media);
+    subjectHook[1](piece.subject);
     setShowEditModal(true);
   };
 
@@ -82,7 +81,7 @@ const PortfolioItem = (props) => {
     let deletedMedia = [];
     let newMedia = [];
 
-    props.piece.media.forEach((item) => {
+    piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
         const imageRef = ref(imageUploader, item.locationReference);
         deleteObject(imageRef)
@@ -133,7 +132,7 @@ const PortfolioItem = (props) => {
 
     const updatedMedia = unfilteredUpdatedMedia.filter((item) => item !== null);
 
-    const id = props.piece.id;
+    const id = piece.id;
     const title = titleHook[0];
     const description = descriptionHook[0];
     const year = parseInt(yearHook[0]);
@@ -175,20 +174,20 @@ const PortfolioItem = (props) => {
     e.preventDefault();
     loadingHook[1](true);
 
-    const subjectParam = SubjectEnumToPath(props.piece.subject);
+    const subjectParam = SubjectEnumToPath(piece.subject);
 
     await ArtPieceManager.deleteArtPiece(
-      props.piece.id,
+      piece.id,
       TokenManager.getAccessToken(),
     )
       .then(
-        props.piece.media.forEach((item) => {
+        piece.media.forEach((item) => {
           const imageRef = ref(imageUploader, item.locationReference);
           deleteObject(imageRef).catch((e) => console.error(e));
         }),
       )
       .then(() => {
-        const url = `/module/${props.piece.year}/${props.piece.module}/${subjectParam}`;
+        const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
         if (location.pathname === url) {
           window.location.reload();
         } else {
@@ -205,44 +204,19 @@ const PortfolioItem = (props) => {
   };
 
   return (
-    <div className="p-4 md:w-1/3" key={props.piece.id}>
+    <div className="p-4 md:w-1/3" key={piece.id}>
       <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg group">
-        {props.piece.media.length > 0 && (
+        {piece.media.length > 0 && (
           <div className="lg:h-56 md:h-40 bg-gray-100">
-            {props.piece.media.length === 1 ? (
-              <>
-                {props.piece.media[0].locationReference.startsWith("images") ? (
-                  <Zoom>
-                    <img
-                      loading="lazy"
-                      className="object-contain object-center w-full h-full"
-                      src={props.piece.media[0].url}
-                      alt={`Image 1`}
-                    />
-                  </Zoom>
-                ) : props.piece.media[0].locationReference.startsWith(
-                    "videos",
-                  ) ? (
-                  <video
-                    loading="lazy"
-                    className="object-contain object-center w-full h-full"
-                    controls
-                    muted
-                    src={props.piece.media[0].url}
-                  />
-                ) : null}
-              </>
-            ) : (
-              <Carousel slides={props.piece.media} />
-            )}
+            <Carousel slides={piece.media} />
           </div>
         )}
         <div className="px-6 pb-6 pt-5 relative">
           <h1 className="title-font text-lg font-semibold text-gray-800 mb-3">
-            {props.piece.title}
+            {piece.title}
           </h1>
           <p className="leading-relaxed mb-0 text-gray-600">
-            {props.piece.description}
+            {piece.description}
           </p>
           {TokenManager.getClaims() ? (
             <>

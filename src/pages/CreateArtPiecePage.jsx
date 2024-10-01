@@ -4,8 +4,7 @@ import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
-import { Link, useNavigate } from "react-router-dom";
-import ImageOrderPicker from "../components/ImageOrderPicker";
+import { Navigate, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
 
@@ -30,7 +29,6 @@ const CreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     loadingHook[1](true);
-    debugger;
 
     if (mediaHook[0] !== null) {
       const mediaFiles = [];

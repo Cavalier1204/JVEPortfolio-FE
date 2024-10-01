@@ -1,0 +1,142 @@
+{
+    "data": [
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "WERKPRAKTIJK_1",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        },
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "WERKPRAKTIJK_2",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        },
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "THEORIE",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        },
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "SKILLS",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        },
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "POSITIONERING",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        },
+        {
+            "id": "Lorem",
+            "createdAt": "2024-04-03T16:04:30.877Z",
+            "title": "Nette witte olifant, die heuvels.",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum purus elit, eu dapibus erat scelerisque vel. Duis viverra lobortis dolor, vel commodo leo hendrerit sed. In id nibh mauris. Aliquam at volutpat felis. Donec sodales enim at rhoncus bibendum. Quisque ac feugiat elit, non volutpat lorem. Sed id arcu elementum, rhoncus ligula sed, cursus tellus. Phasellus auctor interdum felis, a finibus dolor ultrices vel. Nullam in metus sit amet enim sagittis venenatis. Vestibulum eget scelerisque nisl. Pellentesque ac ullamcorper dui, vitae porttitor metus. Nulla eu accumsan felis. Nullam nulla urna, varius a imperdiet eget, condimentum sagittis lectus. Donec mattis ac nisi vitae euismod. Cras blandit justo eget iaculis porta. Mauris cursus scelerisque risus, non aliquet lorem elementum a.\nSed fringilla neque vitae lorem molestie, et vehicula felis maximus. Vivamus id ornare metus. Sed mattis sem eget enim tincidunt, sit amet pulvinar nisi lacinia. Vestibulum viverra nibh ut purus ultricies, eu aliquet odio viverra. Vestibulum tristique fringilla justo, quis gravida tellus hendrerit vitae. Donec placerat est quis urna maximus, efficitur porttitor dolor convallis. Sed ac odio a sapien luctus hendrerit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin congue urna ligula. Cras ullamcorper condimentum libero eget feugiat. Nulla lobortis molestie lobortis. Aliquam lorem dui, varius at maximus eu, cursus ut nunc. Vestibulum finibus, leo eget semper egestas, leo est hendrerit nibh, sit amet tincidunt enim libero in elit. Nunc neque orci, volutpat nec vehicula at, vestibulum ultrices mauris. Curabitur sed tortor ut ipsum porttitor accumsan. ",
+            "subject": "PORTFOLIO",
+            "media": [
+                {
+                    "id": 24,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "images/Ipsum",
+                    "order": 1,
+                    "artPieceId": "Lorem"
+                },
+                {
+                    "id": 25,
+                    "createdAt": "2024-04-03T16:04:30.877Z",
+                    "locationReference": "videos/Dolor",
+                    "order": 2,
+                    "artPieceId": "Lorem"
+                }
+            ]
+        }
+    ]
+}

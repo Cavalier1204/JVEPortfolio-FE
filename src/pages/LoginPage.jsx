@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import UserManager from "../services/UserManager";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TokenManager from "../services/TokenManager";
 
 const LoginPage = () => {

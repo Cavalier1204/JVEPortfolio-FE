@@ -36,7 +36,7 @@ export default function Carousel({ slides }) {
               <Zoom>
                 <img
                   loading="lazy"
-                  className="object-contain object-center h-full mx-auto cursor-zoom-in"
+                  className="object-contain object-center h-full mx-auto cursor-zoom-in w-full"
                   src={file.url}
                   alt={`Image ${index + 1}`}
                   key={index}
@@ -45,28 +45,27 @@ export default function Carousel({ slides }) {
             ) : file.locationReference.startsWith("videos") ? (
               <video
                 loading="lazy"
-                className="object-contain object-center h-full mx-auto"
+                className="object-contain object-center h-full mx-auto w-full"
                 controls
                 muted
                 key={index}
                 src={file.url}
               />
-            ) : //   <source  type="video/mp4" />
-            //   Your browser does not support the video tag.
-            // </video>
-            null}
+            ) : null}
           </div>
         ))}
       </div>
 
-      <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
-        <button onClick={previousSlide} className="pointer-events-auto">
-          <ChevronLeftIcon className="h-10" id="arrow-left" />
-        </button>
-        <button onClick={nextSlide} className="pointer-events-auto">
-          <ChevronRightIcon className="h-10" id="arrow-right" />
-        </button>
-      </div>
+      {slides.length > 1 ? (
+        <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
+          <button onClick={previousSlide} className="pointer-events-auto">
+            <ChevronLeftIcon className="h-10" id="arrow-left" />
+          </button>
+          <button onClick={nextSlide} className="pointer-events-auto">
+            <ChevronRightIcon className="h-10" id="arrow-right" />
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
