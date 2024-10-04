@@ -19,7 +19,7 @@ const firebaseConfig = {
 
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);
-export const imageUploader = getStorage(app);
+export const firebaseService = getStorage(app);
 
 // Exporting functions and storage reference
 export const ref = storageRef;
