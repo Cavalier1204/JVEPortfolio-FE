@@ -31,7 +31,7 @@ const LoginPage = () => {
         if (error.response && error.response.status === 401) {
           alert("Gebruikersnaam en/of wachtwoord incorrect.");
         } else {
-          alert("An error occurred!");
+          alert("Er is iets fout gegaan, probeer het later opnieuw.");
         }
       });
   };

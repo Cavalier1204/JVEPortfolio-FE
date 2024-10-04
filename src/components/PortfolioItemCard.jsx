@@ -5,8 +5,12 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { imageUploader } from "../services/Firebase";
-import { deleteObject, ref, uploadBytes } from "firebase/storage";
+import {
+  imageUploader,
+  deleteObject,
+  ref,
+  uploadBytes,
+} from "../services/Firebase";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
@@ -35,13 +39,13 @@ const PortfolioItem = ({ piece }) => {
       const convertMedia = async () => {
         const updatedMedia = [];
         for (const mediaItem of piece.media) {
-            const { preview, url } = await fetchPreviewURL(
-              mediaItem.locationReference,
-            );
+          const { preview, url } = await fetchPreviewURL(
+            mediaItem.locationReference,
+          );
           updatedMedia.push({
-              ...mediaItem,
-              preview,
-              url,
+            ...mediaItem,
+            preview,
+            url,
           });
         }
 

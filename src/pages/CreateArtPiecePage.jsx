@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { imageUploader } from "../services/Firebase";
+import { imageUploader, ref, uploadBytes } from "../services/Firebase";
 import { v4 } from "uuid";
-import { ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -82,22 +81,22 @@ const CreatePage = () => {
   };
 
   if (TokenManager.getClaims()) {
-  return (
-    <div className="w-full max-w-md flex flex-col justify-center mb-10">
-      <ArtPieceForm
-        onSubmit={handleSubmit}
-        headerText="Portfolio item aanmaken"
-        titleHook={titleHook}
-        descriptionHook={descriptionHook}
-        yearHook={yearHook}
-        moduleHook={moduleHook}
-        subjectHook={subjectHook}
-        mediaHook={mediaHook}
-        onClose={() => navigate("/")}
-        loadingHook={loadingHook}
-      />
-    </div>
-  );
+    return (
+      <div className="w-full max-w-md flex flex-col justify-center mb-10">
+        <ArtPieceForm
+          onSubmit={handleSubmit}
+          headerText="Portfolio item aanmaken"
+          titleHook={titleHook}
+          descriptionHook={descriptionHook}
+          yearHook={yearHook}
+          moduleHook={moduleHook}
+          subjectHook={subjectHook}
+          mediaHook={mediaHook}
+          onClose={() => navigate("/")}
+          loadingHook={loadingHook}
+        />
+      </div>
+    );
   } else {
     return <Navigate to="/login" />;
   }
