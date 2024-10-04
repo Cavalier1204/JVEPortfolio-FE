@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { imageUploader, ref, uploadBytes } from "../services/Firebase";
+import { firebaseService, ref, uploadBytes } from "../services/Firebase";
 import { v4 } from "uuid";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
 import { Navigate, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
+import { imageUploader } from "../services/MediaUtils";
 
 const CreatePage = () => {
   const titleHook = useState("");
@@ -30,33 +31,7 @@ const CreatePage = () => {
     loadingHook[1](true);
 
     if (mediaHook[0] !== null) {
-      const mediaFiles = [];
-      for (let i = 0; i < mediaHook[0].length; i++) {
-        const file = mediaHook[0][i];
-        const fileType = file.type.split("/")[0];
-
-        let storageRef;
-        if (fileType === "image") {
-          storageRef = ref(imageUploader, `images/${v4()}.jpg`);
-        } else if (fileType === "video") {
-          storageRef = ref(imageUploader, `videos/${v4()}.mp4`);
-        } else {
-          continue;
-        }
-
-        try {
-          const uploadTask = await uploadBytes(storageRef, file);
-          const relativePath = storageRef.fullPath;
-
-          mediaFiles.push({
-            locationReference: relativePath,
-            order: i + 1,
-          });
-        } catch (error) {
-          console.error("Error uploading file:", error);
-          loadingHook[1](true);
-        }
-      }
+      const media = await imageUploader(mediaHook[0]);
 
       const title = titleHook[0];
       const description = descriptionHook[0];
@@ -66,16 +41,23 @@ const CreatePage = () => {
 
       try {
         const newArtPiece = await ArtPieceManager.saveArtPiece(
-          { title, description, year, module, media: mediaFiles, subject },
+          {
+            title,
+            description,
+            year,
+            module,
+            media: media.mediaFiles,
+            subject,
+          },
           TokenManager.getAccessToken(),
         );
 
         const subjectParam = SubjectEnumToPath(subject);
-
+        loadingHook[1](false);
         navigate(`/module/${year}/${module}/${subjectParam}`);
       } catch (error) {
         console.error("Error saving art piece:", error);
-        loadingHook[1](true);
+        loadingHook[1](false);
       }
     }
   };

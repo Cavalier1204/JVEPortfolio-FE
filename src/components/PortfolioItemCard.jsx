@@ -6,7 +6,7 @@ import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import {
-  imageUploader,
+  firebaseService,
   deleteObject,
   ref,
   uploadBytes,
@@ -17,6 +17,7 @@ import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
 import "../styles.css";
 import { fetchPreviewURL } from "../services/MediaUtils";
+import imageCompression from "browser-image-compression";
 
 const PortfolioItem = ({ piece }) => {
   const titleHook = useState(piece.title);
@@ -87,7 +88,7 @@ const PortfolioItem = ({ piece }) => {
 
     piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
-        const imageRef = ref(imageUploader, item.locationReference);
+        const imageRef = ref(firebaseService, item.locationReference);
         deleteObject(imageRef)
           .then(() => {
             deletedMedia.push(item.id);
@@ -102,16 +103,27 @@ const PortfolioItem = ({ piece }) => {
           const fileType = mediaItem.type.split("/")[0];
 
           let storageRef;
+          let resizedFile = file;
+
           if (fileType === "image") {
-            storageRef = ref(imageUploader, `images/${v4()}.jpg`);
+            const options = {
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+            };
+
+            try {
+              resizedFile = await imageCompression(file, options);
+            } catch (error) {
+              console.error("Error resizing the image:", error);
+            }
           } else if (fileType === "video") {
-            storageRef = ref(imageUploader, `videos/${v4()}.mp4`);
+            storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
           } else {
             return;
           }
 
           try {
-            const uploadTask = await uploadBytes(storageRef, mediaItem);
+            const uploadTask = await uploadBytes(storageRef, resizedFile);
             const relativePath = storageRef.fullPath;
 
             newMedia.push({
@@ -186,7 +198,7 @@ const PortfolioItem = ({ piece }) => {
     )
       .then(
         piece.media.forEach((item) => {
-          const imageRef = ref(imageUploader, item.locationReference);
+          const imageRef = ref(firebaseService, item.locationReference);
           deleteObject(imageRef).catch((e) => console.error(e));
         }),
       )
