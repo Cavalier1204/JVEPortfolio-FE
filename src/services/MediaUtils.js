@@ -1,18 +1,4 @@
-// Dynamic import based on environment
-let imageUploader, getBytes, ref;
-if (process.env.NODE_ENV === "development") {
-  import("../services/Firebase.dev.js").then((module) => {
-    imageUploader = module.imageUploader;
-    getBytes = module.getBytes;
-    ref = module.ref;
-  });
-} else {
-  import("../services/Firebase.js").then((module) => {
-    imageUploader = module.imageUploader;
-    getBytes = module.getBytes;
-    ref = module.ref;
-  });
-}
+import { imageUploader, getBytes, ref } from "../services/Firebase.js";
 
 export const fetchPreviewURL = async (locationReference) => {
   const mediaRef = ref(imageUploader, locationReference);
