@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import UserManager from "../services/UserManager";
 import { useNavigate } from "react-router-dom";
 import TokenManager from "../services/TokenManager";
+import { useAuth } from "../modules/AuthContext";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { login } = useAuth();
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +25,8 @@ const LoginPage = () => {
     setIsLoading(true);
 
     UserManager.signin(username, password)
-      .then(() => {
+      .then((token) => {
+        login(token);
         navigate("/");
       })
       .catch((error) => {

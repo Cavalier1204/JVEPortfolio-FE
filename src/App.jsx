@@ -8,10 +8,11 @@ import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
 import SubjectPage from "./pages/SubjectPage";
 import TokenManager from "./services/TokenManager";
+import { AuthProvider } from "./modules/AuthContext";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <HashRouter>
         <Navbar />
         <div className="md:container md:mx-auto flex justify-center pt-5">
@@ -37,7 +38,7 @@ function App() {
           </Routes>
         </div>
       </HashRouter>
-    </>
+    </AuthProvider>
   );
 }
 

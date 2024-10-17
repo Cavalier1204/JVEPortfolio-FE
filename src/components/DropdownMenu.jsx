@@ -23,7 +23,7 @@ const DropdownMenu = ({ schoolYears }) => {
         aria-hidden="true"
       />
       {isOpen && (
-        <div className="absolute left-0 top-14 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <div className="absolute left-0 top-20 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             {schoolYears.map((year, index) => (
               // Year rows
@@ -40,7 +40,7 @@ const DropdownMenu = ({ schoolYears }) => {
                 </div>
                 {openYear === index + 1 && (
                   <div
-                    className="absolute left-full mt-0 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
+                    className="absolute left-full mt-0 ms-3 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
                     style={{ top: `${index * 36}px` }}
                   >
                     {[1, 2, 3, 4].map((module) => (
