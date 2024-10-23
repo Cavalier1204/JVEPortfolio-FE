@@ -16,14 +16,17 @@ const DropdownMenu = ({ schoolYears }) => {
   };
 
   return (
-    <div className="relative text-left h-full aspect-square items-center bg-[#a1a6a2] hover:bg-[#8f9490] rounded inline-flex justify-center">
-      <Bars3Icon
-        onClick={toggleDropdown}
-        className="mx-auto my-auto h-12 w-12 text-white"
-        aria-hidden="true"
-      />
+    <div className="relative">
+      <div className="h-16 w-16 bg-[#a1a6a2] hover:bg-[#8f9490] rounded flex justify-center items-center">
+        <Bars3Icon
+          onClick={toggleDropdown}
+          className="h-12 w-12 text-white"
+          aria-hidden="true"
+        />
+      </div>
+
       {isOpen && (
-        <div className="absolute left-0 top-20 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <div className="absolute top-[72px] mt-2 z-10 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             {schoolYears.map((year, index) => (
               // Year rows
@@ -38,9 +41,10 @@ const DropdownMenu = ({ schoolYears }) => {
                 >
                   {year}
                 </div>
+
                 {openYear === index + 1 && (
                   <div
-                    className="absolute left-full mt-0 ms-3 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
+                    className="absolute left-full ml-1 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
                     style={{ top: `${index * 36}px` }}
                   >
                     {[1, 2, 3, 4].map((module) => (
@@ -58,6 +62,7 @@ const DropdownMenu = ({ schoolYears }) => {
                 )}
               </div>
             ))}
+
             <Link
               to="/portfolio"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
