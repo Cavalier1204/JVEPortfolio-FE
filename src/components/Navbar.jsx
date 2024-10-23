@@ -11,26 +11,20 @@ const Navbar = () => {
 
   return (
     <div className="w-full bg-[#b5bab6] p-2 shadow-md">
-      <div className="md:container flex justify-between">
-        <div className="flex">
+      <div className="md:container mx-auto flex justify-between items-center h-16 gap-4">
+        <div className="flex items-center gap-4">
           <DropdownMenu schoolYears={schoolYears} />
-          <Link className="w-fit ms-4" to="/">
-            <h2 className="w-fit text-offwhite drop-shadow-md font-light">
-              Ontwikkelingsportfolio
-            </h2>
-            <h3 className="w-fit text-offwhite drop-shadow-md font-light">
-              JVE
-            </h3>
+          <Link to="/" className="text-offwhite drop-shadow-md shadow-red-400">
+            <h2 className="font-light">Ontwikkelingsportfolio</h2>
+            <h3 className="font-light">JVE</h3>
           </Link>
         </div>
         {authState.isAuthenticated && authState.claims && (
-          <Link className="w-20" to="/upload">
-            <div className="inline-flex h-full aspect-square justify-center gap-x-1.5 bg-[#a1a6a2] text-sm font-semibold text-gray-900 shadow-sm  hover:bg-[#8f9490] rounded">
-              <PlusIcon
-                className="-mx-1 h-12 w-12 text-white my-auto"
-                aria-hidden="true"
-              />
-            </div>
+          <Link
+            to="/upload"
+            className="h-16 w-16 bg-[#a1a6a2] hover:bg-[#8f9490] rounded flex justify-center items-center"
+          >
+            <PlusIcon className="h-12 w-12 text-white" aria-hidden="true" />
           </Link>
         )}
       </div>
