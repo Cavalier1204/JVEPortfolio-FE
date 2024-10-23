@@ -231,7 +231,7 @@ const PortfolioItem = ({ piece }) => {
           <h1 className="title-font text-lg font-semibold text-gray-800 mb-3">
             {piece.title}
           </h1>
-          <p className="leading-relaxed mb-0 text-gray-600">
+          <p className="leading-relaxed mb-0 text-gray-600 whitespace-pre-line">
             {piece.description}
           </p>
           {TokenManager.getClaims() ? (
