@@ -28,30 +28,28 @@ const DropdownMenu = ({ schoolYears }) => {
       {isOpen && (
         <div className="absolute top-[72px] mt-2 z-10 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            {schoolYears.map((year, index) => (
-              // Year rows
-              <div key={index}>
+            {Object.entries(schoolYears).map(([year, modules]) => (
+              <div key={year}>
                 <div
-                  onMouseEnter={() => handleYearHover(index + 1)}
+                  onMouseEnter={() => handleYearHover(year)}
                   className={`${
-                    openYear === index + 1
+                    openYear === year
                       ? "bg-gray-200 text-gray-900"
                       : "text-gray-700"
                   } block px-4 py-2 text-sm`}
                 >
-                  {year}
+                  Leerjaar {year}
                 </div>
 
-                {openYear === index + 1 && (
+                {openYear === year && (
                   <div
                     className="absolute left-full ml-1 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1"
-                    style={{ top: `${index * 36}px` }}
+                    style={{ top: `${(parseInt(year) - 1) * 36}px` }}
                   >
-                    {[1, 2, 3, 4].map((module) => (
-                      // Module rows
+                    {modules.map((module) => (
                       <Link
                         key={module}
-                        to={`/module/${index + 1}/${module}`}
+                        to={`/module/${year}/${module}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                         onClick={() => toggleDropdown()}
                       >
