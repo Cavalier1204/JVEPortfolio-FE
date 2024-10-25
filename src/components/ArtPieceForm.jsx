@@ -1,4 +1,5 @@
 import ImageOrderPicker from "./ImageOrderPicker";
+import schoolYears from "../data/year-structure.json";
 
 export default function ArtPieceForm({
   onSubmit,
@@ -12,6 +13,14 @@ export default function ArtPieceForm({
   onClose,
   loadingHook,
 }) {
+  const [selectedYear, setSelectedYear] = yearHook;
+
+  const handleYearChange = (e) => {
+    const selectedYear = e.target.value;
+    setSelectedYear(selectedYear);
+    moduleHook[1](selectedYear * 4 - 3);
+  };
+
   return (
     <form onSubmit={onSubmit}>
       <h3>{headerText}</h3>
@@ -46,28 +55,41 @@ export default function ArtPieceForm({
 
       <label htmlFor="year" className="block text-gray-500 font-bold mb-5">
         Leerjaar
-        <input
-          type="text"
+        <select
           name="year"
           id="year"
-          value={yearHook[0]}
-          onChange={(e) => yearHook[1](e.target.value)}
+          value={selectedYear}
+          onChange={handleYearChange}
           required
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-        />
+        >
+          <option value={1}>Leerjaar 1</option>
+          <option value={2}>Leerjaar 2</option>
+          <option value={3}>Leerjaar 3</option>
+          <option value={4}>Leerjaar 4</option>
+        </select>
       </label>
 
       <label htmlFor="module" className="block text-gray-500 font-bold mb-5">
         Module
-        <input
-          type="text"
+        <select
           name="module"
           id="module"
           value={moduleHook[0]}
           onChange={(e) => moduleHook[1](e.target.value)}
           required
-          className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-        />
+          disabled={!selectedYear}
+          className={`bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${
+            !selectedYear ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {selectedYear &&
+            schoolYears[selectedYear].map((module) => (
+              <option key={module} value={module}>
+                Module {module}
+              </option>
+            ))}
+        </select>
       </label>
 
       <label htmlFor="subject" className="block text-gray-500 font-bold mb-5">

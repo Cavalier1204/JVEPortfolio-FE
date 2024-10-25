@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
-import TokenManager from "../services/TokenManager";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useAuth } from "../modules/AuthContext";
-
-const schoolYears = ["Leerjaar 1", "Leerjaar 2", "Leerjaar 3", "Leerjaar 4"];
+import schoolYears from "../data/year-structure.json";
 
 const Navbar = () => {
   const { authState } = useAuth();

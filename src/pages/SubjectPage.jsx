@@ -35,9 +35,9 @@ const SubjectPage = () => {
   }
 
   return (
-    <div className="container px-5 pt-2 pb-10 mx-auto">
+    <div className="px-5 pb-10 w-full">
       {modules[subject].subjects.map(({ enumName, displayName }, index) => (
-        <div key={index}>
+        <div key={index} className="pt-5">
           <h2 className="mx-auto w-fit font-light">{displayName}</h2>
           <div
             className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
