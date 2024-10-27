@@ -8,36 +8,35 @@ import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
 import SubjectPage from "./pages/SubjectPage";
 import TokenManager from "./services/TokenManager";
+import { AuthProvider } from "./modules/AuthContext";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <HashRouter>
         <Navbar />
-        <div className="md:container md:mx-auto flex justify-center pt-5">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/upload"
-              element={
-                TokenManager.getClaims() ? (
-                  <CreatePage />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-            <Route path="/module/:year/:module" element={<ModulePage />} />
-            <Route
-              path="/module/:year/:module/:subject"
-              element={<SubjectPage />}
-            />
-            <Route path="/portfolio" element={<PortfolioPage />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/upload"
+            element={
+              TokenManager.getClaims() ? (
+                <CreatePage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/module/:year/:module" element={<ModulePage />} />
+          <Route
+            path="/module/:year/:module/:subject"
+            element={<SubjectPage />}
+          />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+        </Routes>
       </HashRouter>
-    </>
+    </AuthProvider>
   );
 }
 

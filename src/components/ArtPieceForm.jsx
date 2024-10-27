@@ -1,4 +1,5 @@
 import ImageOrderPicker from "./ImageOrderPicker";
+import schoolYears from "../data/year-structure.json";
 
 export default function ArtPieceForm({
   onSubmit,
@@ -10,7 +11,16 @@ export default function ArtPieceForm({
   subjectHook,
   mediaHook,
   onClose,
+  loadingHook,
 }) {
+  const [selectedYear, setSelectedYear] = yearHook;
+
+  const handleYearChange = (e) => {
+    const selectedYear = e.target.value;
+    setSelectedYear(selectedYear);
+    moduleHook[1](selectedYear * 4 - 3);
+  };
+
   return (
     <form onSubmit={onSubmit}>
       <h3>{headerText}</h3>
@@ -45,28 +55,41 @@ export default function ArtPieceForm({
 
       <label htmlFor="year" className="block text-gray-500 font-bold mb-5">
         Leerjaar
-        <input
-          type="text"
+        <select
           name="year"
           id="year"
-          value={yearHook[0]}
-          onChange={(e) => yearHook[1](e.target.value)}
+          value={selectedYear}
+          onChange={handleYearChange}
           required
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-        />
+        >
+          <option value={1}>Leerjaar 1</option>
+          <option value={2}>Leerjaar 2</option>
+          <option value={3}>Leerjaar 3</option>
+          <option value={4}>Leerjaar 4</option>
+        </select>
       </label>
 
       <label htmlFor="module" className="block text-gray-500 font-bold mb-5">
         Module
-        <input
-          type="text"
+        <select
           name="module"
           id="module"
           value={moduleHook[0]}
           onChange={(e) => moduleHook[1](e.target.value)}
           required
-          className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-        />
+          disabled={!selectedYear}
+          className={`bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${
+            !selectedYear ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {selectedYear &&
+            schoolYears[selectedYear].map((module) => (
+              <option key={module} value={module}>
+                Module {module}
+              </option>
+            ))}
+        </select>
       </label>
 
       <label htmlFor="subject" className="block text-gray-500 font-bold mb-5">
@@ -99,12 +122,37 @@ export default function ArtPieceForm({
         >
           Annuleren
         </button>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
-          type="submit"
-        >
-          Opslaan
-        </button>
+        {loadingHook[0] ? (
+          <button
+            type="button"
+            className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-fit flex cursor-not-allowed"
+            disabled
+          >
+            <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+            Uploaden...
+          </button>
+        ) : (
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
+            type="submit"
+          >
+            Opslaan
+          </button>
+        )}
       </div>
     </form>
   );

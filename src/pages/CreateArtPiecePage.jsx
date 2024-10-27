@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { imageUploader } from "../services/Firebase";
+import { firebaseService, ref, uploadBytes } from "../services/Firebase";
 import { v4 } from "uuid";
-import { ref, uploadBytes } from "firebase/storage";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
-import { Link, useNavigate } from "react-router-dom";
-import ImageOrderPicker from "../components/ImageOrderPicker";
+import { Navigate, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
+import { imageUploader } from "../services/MediaUtils";
 
 const CreatePage = () => {
   const titleHook = useState("");
@@ -16,6 +15,8 @@ const CreatePage = () => {
   const moduleHook = useState(1);
   const mediaHook = useState([]);
   const subjectHook = useState("WERKPRAKTIJK_1");
+
+  const loadingHook = useState(false);
 
   const navigate = useNavigate();
 
@@ -27,34 +28,10 @@ const CreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
 
     if (mediaHook[0] !== null) {
-      const mediaFiles = [];
-      for (let i = 0; i < mediaHook[0].length; i++) {
-        const file = mediaHook[0][i];
-        const fileType = file.type.split("/")[0];
-
-        let storageRef;
-        if (fileType === "image") {
-          storageRef = ref(imageUploader, `images/${v4()}`);
-        } else if (fileType === "video") {
-          storageRef = ref(imageUploader, `videos/${v4()}`);
-        } else {
-          continue;
-        }
-
-        try {
-          const uploadTask = await uploadBytes(storageRef, file);
-          const relativePath = storageRef.fullPath;
-
-          mediaFiles.push({
-            locationReference: relativePath,
-            order: i + 1,
-          });
-        } catch (error) {
-          console.error("Error uploading file:", error);
-        }
-      }
+      const media = await imageUploader(mediaHook[0]);
 
       const title = titleHook[0];
       const description = descriptionHook[0];
@@ -64,34 +41,49 @@ const CreatePage = () => {
 
       try {
         const newArtPiece = await ArtPieceManager.saveArtPiece(
-          { title, description, year, module, media: mediaFiles, subject },
+          {
+            title,
+            description,
+            year,
+            module,
+            media: media.mediaFiles,
+            subject,
+          },
           TokenManager.getAccessToken(),
         );
 
         const subjectParam = SubjectEnumToPath(subject);
-
+        loadingHook[1](false);
         navigate(`/module/${year}/${module}/${subjectParam}`);
       } catch (error) {
         console.error("Error saving art piece:", error);
+        loadingHook[1](false);
       }
     }
   };
 
-  return (
-    <div className="w-full max-w-md flex flex-col justify-center mb-10">
-      <ArtPieceForm
-        onSubmit={handleSubmit}
-        headerText="Portfolio item aanmaken"
-        titleHook={titleHook}
-        descriptionHook={descriptionHook}
-        yearHook={yearHook}
-        moduleHook={moduleHook}
-        subjectHook={subjectHook}
-        mediaHook={mediaHook}
-        onClose={() => navigate("/")}
-      />
-    </div>
-  );
+  if (TokenManager.getClaims()) {
+    return (
+      <div className="md:container md:mx-auto flex justify-center pt-5">
+        <div className="w-full max-w-md flex flex-col justify-center mb-10">
+          <ArtPieceForm
+            onSubmit={handleSubmit}
+            headerText="Portfolio item aanmaken"
+            titleHook={titleHook}
+            descriptionHook={descriptionHook}
+            yearHook={yearHook}
+            moduleHook={moduleHook}
+            subjectHook={subjectHook}
+            mediaHook={mediaHook}
+            onClose={() => navigate("/")}
+            loadingHook={loadingHook}
+          />
+        </div>
+      </div>
+    );
+  } else {
+    return <Navigate to="/login" />;
+  }
 };
 
 export default CreatePage;

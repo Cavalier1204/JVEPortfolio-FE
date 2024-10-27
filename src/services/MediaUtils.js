@@ -1,8 +1,58 @@
-import { getBytes, ref } from "firebase/storage";
-import { imageUploader } from "../services/Firebase";
+import {
+  firebaseService,
+  getBytes,
+  ref,
+  uploadBytes,
+} from "../services/Firebase.js";
+import { v4 } from "uuid";
+import imageCompression from "browser-image-compression";
+
+export const imageUploader = async (media) => {
+  const mediaFiles = [];
+  if (media !== null) {
+    for (let i = 0; i < media.length; i++) {
+      const file = media[i];
+      const fileType = file.type.split("/")[0];
+
+      let storageRef;
+      let resizedFile = file;
+
+      if (fileType === "image") {
+        const options = {
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+
+        try {
+          resizedFile = await imageCompression(file, options);
+          storageRef = ref(firebaseService, `images/${v4()}.jpg`);
+        } catch (error) {
+          console.error("Error resizing the image:", error);
+        }
+      } else if (fileType === "video") {
+        storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
+      } else {
+        continue;
+      }
+
+      try {
+        const uploadTask = await uploadBytes(storageRef, resizedFile);
+        const relativePath = storageRef.fullPath;
+
+        mediaFiles.push({
+          locationReference: relativePath,
+          order: i + 1,
+        });
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+  }
+  return { mediaFiles };
+};
 
 export const fetchPreviewURL = async (locationReference) => {
-  const mediaRef = ref(imageUploader, locationReference);
+  const mediaRef = ref(firebaseService, locationReference);
   const bytes = await getBytes(mediaRef);
   const blob = new Blob([bytes]);
 

@@ -4,25 +4,28 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
-import ImageOrderPicker from "./ImageOrderPicker";
 import { v4 } from "uuid";
-import { imageUploader } from "../services/Firebase";
-import { deleteObject, ref, uploadBytes } from "firebase/storage";
+import {
+  firebaseService,
+  deleteObject,
+  ref,
+  uploadBytes,
+} from "../services/Firebase";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
-import Zoom from "react-medium-image-zoom";
 import "../styles.css";
 import { fetchPreviewURL } from "../services/MediaUtils";
+import imageCompression from "browser-image-compression";
 
-const PortfolioItem = (props) => {
-  const titleHook = useState(props.piece.title);
-  const descriptionHook = useState(props.piece.description);
-  const yearHook = useState(props.piece.year);
-  const moduleHook = useState(props.piece.module);
-  const mediaHook = useState(props.piece.media);
-  const subjectHook = useState(props.piece.subject);
+const PortfolioItem = ({ piece }) => {
+  const titleHook = useState(piece.title);
+  const descriptionHook = useState(piece.description);
+  const yearHook = useState(piece.year);
+  const moduleHook = useState(piece.module);
+  const mediaHook = useState(piece.media);
+  const subjectHook = useState(piece.subject);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -30,44 +33,45 @@ const PortfolioItem = (props) => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const loadingHook = useState(false);
 
   useEffect(() => {
     if (!isMediaConverted) {
       const convertMedia = async () => {
-        const updatedMedia = await Promise.all(
-          props.piece.media.map(async (mediaItem) => {
-            const { preview, url } = await fetchPreviewURL(
-              mediaItem.locationReference,
-            );
-            return {
-              ...mediaItem,
-              preview,
-              url,
-            };
-          }),
-        );
+        const updatedMedia = [];
+        for (const mediaItem of piece.media) {
+          const { preview, url } = await fetchPreviewURL(
+            mediaItem.locationReference,
+          );
+          updatedMedia.push({
+            ...mediaItem,
+            preview,
+            url,
+          });
+        }
+
         setIsMediaConverted(true);
-        props.piece.media = updatedMedia;
+        piece.media = updatedMedia;
         mediaHook[1](updatedMedia);
       };
 
-      if (props.piece.media.length > 0) {
+      if (piece.media.length > 0) {
         convertMedia();
       }
     }
-  }, [props.piece.media]);
+  }, [piece.media]);
 
   useEffect(() => {
-    mediaHook[1](props.piece.media);
-  }, [props.piece.media]);
+    mediaHook[1](piece.media);
+  }, [piece.media]);
 
   const openEditModal = () => {
-    titleHook[1](props.piece.title);
-    descriptionHook[1](props.piece.description);
-    yearHook[1](props.piece.year);
-    moduleHook[1](props.piece.module);
-    mediaHook[1](props.piece.media);
-    subjectHook[1](props.piece.subject);
+    titleHook[1](piece.title);
+    descriptionHook[1](piece.description);
+    yearHook[1](piece.year);
+    moduleHook[1](piece.module);
+    mediaHook[1](piece.media);
+    subjectHook[1](piece.subject);
     setShowEditModal(true);
   };
 
@@ -77,13 +81,14 @@ const PortfolioItem = (props) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
 
     let deletedMedia = [];
     let newMedia = [];
 
-    props.piece.media.forEach((item) => {
+    piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
-        const imageRef = ref(imageUploader, item.locationReference);
+        const imageRef = ref(firebaseService, item.locationReference);
         deleteObject(imageRef)
           .then(() => {
             deletedMedia.push(item.id);
@@ -94,20 +99,34 @@ const PortfolioItem = (props) => {
 
     const unfilteredUpdatedMedia = await Promise.all(
       mediaHook[0].map(async (mediaItem, index) => {
+        debugger;
         if (mediaItem instanceof File) {
           const fileType = mediaItem.type.split("/")[0];
 
           let storageRef;
+          let resizedFile = mediaItem;
+
           if (fileType === "image") {
-            storageRef = ref(imageUploader, `images/${v4()}`);
+            const options = {
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+            };
+
+            try {
+              resizedFile = await imageCompression(mediaItem, options);
+              storageRef = ref(firebaseService, `images/${v4()}.jpg`);
+            } catch (error) {
+              console.error("Error resizing the image:", error);
+            }
           } else if (fileType === "video") {
-            storageRef = ref(imageUploader, `videos/${v4()}`);
+            storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
           } else {
             return;
           }
 
           try {
-            const uploadTask = await uploadBytes(storageRef, mediaItem);
+            debugger;
+            const uploadTask = await uploadBytes(storageRef, resizedFile);
             const relativePath = storageRef.fullPath;
 
             newMedia.push({
@@ -132,7 +151,7 @@ const PortfolioItem = (props) => {
 
     const updatedMedia = unfilteredUpdatedMedia.filter((item) => item !== null);
 
-    const id = props.piece.id;
+    const id = piece.id;
     const title = titleHook[0];
     const description = descriptionHook[0];
     const year = parseInt(yearHook[0]);
@@ -142,7 +161,10 @@ const PortfolioItem = (props) => {
     await ArtPieceManager.updateArtPiece(
       { id, title, description, year, module, subject },
       TokenManager.getAccessToken(),
-    ).catch((error) => console.error(error));
+    ).catch((error) => {
+      console.error(error);
+      loadingHook[1](false);
+    });
 
     const subjectParam = SubjectEnumToPath(subject);
 
@@ -161,26 +183,30 @@ const PortfolioItem = (props) => {
           navigate(url);
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        loadingHook[1](false);
+      });
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
+    loadingHook[1](true);
 
-    const subjectParam = SubjectEnumToPath(props.piece.subject);
+    const subjectParam = SubjectEnumToPath(piece.subject);
 
     await ArtPieceManager.deleteArtPiece(
-      props.piece.id,
+      piece.id,
       TokenManager.getAccessToken(),
     )
       .then(
-        props.piece.media.forEach((item) => {
-          const imageRef = ref(imageUploader, item.locationReference);
+        piece.media.forEach((item) => {
+          const imageRef = ref(firebaseService, item.locationReference);
           deleteObject(imageRef).catch((e) => console.error(e));
         }),
       )
       .then(() => {
-        const url = `/module/${props.piece.year}/${props.piece.module}/${subjectParam}`;
+        const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
         if (location.pathname === url) {
           window.location.reload();
         } else {
@@ -188,7 +214,8 @@ const PortfolioItem = (props) => {
         }
       })
       .catch((e) => {
-        console.log("Error deleting artpiece or media:", e);
+        console.error("Error deleting artpiece or media:", e);
+        loadingHook[1](false);
         alert(
           "Een is een fout opgetreden bij het verwijderen van het item. Probeer het later opnieuw.",
         );
@@ -196,45 +223,19 @@ const PortfolioItem = (props) => {
   };
 
   return (
-    <div className="p-4 md:w-1/3" key={props.piece.id}>
+    <div className="p-4 md:w-1/3" key={piece.id}>
       <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg group">
-        {props.piece.media.length > 0 && (
+        {piece.media.length > 0 && (
           <div className="lg:h-56 md:h-40 bg-gray-100">
-            {props.piece.media.length === 1 ? (
-              <>
-                {props.piece.media[0].locationReference.startsWith("images") ? (
-                  <Zoom>
-                    <img
-                      className="object-contain object-center w-full h-full"
-                      src={props.piece.media[0].url}
-                      alt={`Image 1`}
-                    />
-                  </Zoom>
-                ) : props.piece.media[0].locationReference.startsWith(
-                    "videos",
-                  ) ? (
-                  <video
-                    className="object-contain object-center w-full h-full"
-                    controls
-                    muted
-                    src={props.piece.media[0].url}
-                  />
-                ) : //    <source type="video/mp4" />
-                //   Your browser does not support the video tag.
-                //  </video>
-                null}
-              </>
-            ) : (
-              <Carousel slides={props.piece.media} />
-            )}
+            <Carousel media={piece.media} />
           </div>
         )}
         <div className="px-6 pb-6 pt-5 relative">
           <h1 className="title-font text-lg font-semibold text-gray-800 mb-3">
-            {props.piece.title}
+            {piece.title}
           </h1>
-          <p className="leading-relaxed mb-0 text-gray-600">
-            {props.piece.description}
+          <p className="leading-relaxed mb-0 text-gray-600 whitespace-pre-line">
+            {piece.description}
           </p>
           {TokenManager.getClaims() ? (
             <>
@@ -264,6 +265,7 @@ const PortfolioItem = (props) => {
                 subjectHook={subjectHook}
                 mediaHook={mediaHook}
                 onClose={() => setShowEditModal(false)}
+                loadingHook={loadingHook}
               />
             </Modal>
           ) : null}
@@ -281,12 +283,40 @@ const PortfolioItem = (props) => {
                   >
                     Annuleren
                   </button>
-                  <button
-                    className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
-                    type="submit"
-                  >
-                    Verwijderen
-                  </button>
+                  {loadingHook[0] ? (
+                    <button
+                      type="button"
+                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit flex cursor-not-allowed"
+                      disabled
+                    >
+                      <svg
+                        className="animate-spin h-5 w-5 mr-3"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                      Verwijderen...
+                    </button>
+                  ) : (
+                    <button
+                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
+                      type="submit"
+                    >
+                      Verwijderen
+                    </button>
+                  )}
                 </div>
               </form>
             </Modal>

@@ -1,4 +1,4 @@
-import { arrayMoveImmutable, arrayMoveMutable } from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import { useDropzone } from "react-dropzone";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import { TrashIcon } from "@heroicons/react/24/outline";

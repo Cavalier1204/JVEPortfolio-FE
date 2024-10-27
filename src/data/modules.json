@@ -1,0 +1,37 @@
+{
+    "werkpraktijk": {
+        "title": "Werkpraktijk",
+        "subjects": [
+            {
+                "enumName": "WERKPRAKTIJK_1",
+                "displayName": "Werkpraktijk 1"
+            },
+            {
+                "enumName": "WERKPRAKTIJK_2",
+                "displayName": "Werkpraktijk 2"
+            }
+        ]
+    },
+    "kennis": {
+        "title": "Kennis en vaardigheden",
+        "subjects": [
+            {
+                "enumName": "THEORIE",
+                "displayName": "Theorie"
+            },
+            {
+                "enumName": "SKILLS",
+                "displayName": "Skills"
+            }
+        ]
+    },
+    "positionering": {
+        "title": "Positionering",
+        "subjects": [
+            {
+                "enumName": "POSITIONERING",
+                "displayName": "Positionering"
+            }
+        ]
+    }
+}
