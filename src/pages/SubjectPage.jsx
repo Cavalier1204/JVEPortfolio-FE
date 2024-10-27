@@ -31,27 +31,33 @@ const SubjectPage = () => {
   }, [year, module, subject]);
 
   if (artPieces == null || artPieces.length === 0 || !(subject in modules)) {
-    return <p>Geen portfolio items gevonden.</p>;
+    return (
+      <div className="md:container md:mx-auto flex justify-center pt-5">
+        <p>Geen portfolio items gevonden.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="px-5 pb-10 w-full">
-      {modules[subject].subjects.map(({ enumName, displayName }, index) => (
-        <div key={index} className="pt-5">
-          <h2 className="mx-auto w-fit font-light">{displayName}</h2>
-          <div
-            className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
-            height={2}
-          />
-          <div className="flex flex-wrap -m-4 justify-center">
-            {artPieces
-              .filter((piece) => piece.subject == enumName)
-              .map((piece) => (
-                <PortfolioItem piece={piece} key={piece.id} />
-              ))}
+    <div className="md:container md:mx-auto flex justify-center pt-5">
+      <div className="px-5 pb-10 w-full">
+        {modules[subject].subjects.map(({ enumName, displayName }, index) => (
+          <div key={index} className="pt-5">
+            <h2 className="mx-auto w-fit font-light">{displayName}</h2>
+            <div
+              className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
+              height={2}
+            />
+            <div className="flex flex-wrap -m-4 justify-center">
+              {artPieces
+                .filter((piece) => piece.subject == enumName)
+                .map((piece) => (
+                  <PortfolioItem piece={piece} key={piece.id} />
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

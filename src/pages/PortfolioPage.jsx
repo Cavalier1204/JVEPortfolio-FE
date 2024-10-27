@@ -19,8 +19,8 @@ const PortfolioPage = () => {
   }, []);
 
   return (
-    <div className="container px-5 pt-2 pb-10 mx-auto">
-      <>
+    <div className="md:container md:mx-auto flex justify-center pt-5">
+      <div className="container px-5 pt-2 pb-10 mx-auto">
         <h2 className="mx-auto w-fit font-light">Portfolio</h2>
         <div
           className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
@@ -31,7 +31,7 @@ const PortfolioPage = () => {
             <PortfolioItem piece={piece} key={piece.id} />
           ))}
         </div>
-      </>
+      </div>
     </div>
   );
 };
