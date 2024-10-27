@@ -227,7 +227,7 @@ const PortfolioItem = ({ piece }) => {
       <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg group">
         {piece.media.length > 0 && (
           <div className="lg:h-56 md:h-40 bg-gray-100">
-            <Carousel slides={piece.media} />
+            <Carousel media={piece.media} />
           </div>
         )}
         <div className="px-6 pb-6 pt-5 relative">

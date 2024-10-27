@@ -3,17 +3,28 @@ import { useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
-export default function Carousel({ slides }) {
+export default function Carousel({ media }) {
   let [current, setCurrent] = useState(0);
+  const [loadingStates, setLoadingStates] = useState(
+    new Array(media.length).fill(true), // Initialize loading state for each item
+  );
 
-  let previousSlide = () => {
-    if (current === 0) setCurrent(slides.length - 1);
+  const previousSlide = () => {
+    if (current === 0) setCurrent(media.length - 1);
     else setCurrent(current - 1);
   };
 
-  let nextSlide = () => {
-    if (current === slides.length - 1) setCurrent(0);
+  const nextSlide = () => {
+    if (current === media.length - 1) setCurrent(0);
     else setCurrent(current + 1);
+  };
+
+  const handleLoad = (index) => {
+    setLoadingStates((prev) => {
+      const newLoadingStates = [...prev];
+      newLoadingStates[index] = false;
+      return newLoadingStates;
+    });
   };
 
   return (
@@ -21,27 +32,38 @@ export default function Carousel({ slides }) {
       <div
         className="flex transition ease-out duration-400 h-full"
         style={{
-          transform: `translateX(-${(current * 100) / slides.length}%)`,
-          width: `${100 * slides.length}%`,
+          transform: `translateX(-${(current * 100) / media.length}%)`,
+          width: `${100 * media.length}%`,
         }}
       >
-        {slides.map((file, index) => (
+        {media.map((file, index) => (
           <div
             key={index}
             style={{
-              width: `${100 / slides.length}%`,
+              width: `${100 / media.length}%`,
             }}
+            className="relative"
           >
+            {/* Loading spinner */}
+            {loadingStates[index] && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="w-8 h-8 border-4 border-t-transparent border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
             {file.locationReference.startsWith("images") ? (
-              <Zoom>
-                <img
-                  loading="lazy"
-                  className="object-contain object-center h-full mx-auto cursor-zoom-in w-full"
-                  src={file.url}
-                  alt={`Image ${index + 1}`}
-                  key={index}
-                />
-              </Zoom>
+              <>
+                <Zoom>
+                  <img
+                    loading="lazy"
+                    className={`object-contain object-center h-full mx-auto cursor-zoom-in w-full ${
+                      loadingStates[index] ? "invisible" : "visible"
+                    }`}
+                    src={file.url}
+                    alt={`Image ${index + 1}`}
+                    onLoad={() => handleLoad(index)}
+                  />
+                </Zoom>
+              </>
             ) : file.locationReference.startsWith("videos") ? (
               <video
                 loading="lazy"
@@ -50,13 +72,15 @@ export default function Carousel({ slides }) {
                 muted
                 key={index}
                 src={file.url}
+                onLoadedData={() => handleLoad(index)}
               />
             ) : null}
           </div>
         ))}
       </div>
 
-      {slides.length > 1 ? (
+      {/* Navigation arrows */}
+      {media.length > 1 && (
         <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
           <button onClick={previousSlide} className="pointer-events-auto">
             <ChevronLeftIcon className="h-10" id="arrow-left" />
@@ -65,7 +89,7 @@ export default function Carousel({ slides }) {
             <ChevronRightIcon className="h-10" id="arrow-right" />
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
