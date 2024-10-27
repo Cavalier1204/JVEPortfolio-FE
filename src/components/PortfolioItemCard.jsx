@@ -99,11 +99,12 @@ const PortfolioItem = ({ piece }) => {
 
     const unfilteredUpdatedMedia = await Promise.all(
       mediaHook[0].map(async (mediaItem, index) => {
+        debugger;
         if (mediaItem instanceof File) {
           const fileType = mediaItem.type.split("/")[0];
 
           let storageRef;
-          let resizedFile = file;
+          let resizedFile = mediaItem;
 
           if (fileType === "image") {
             const options = {
@@ -112,7 +113,8 @@ const PortfolioItem = ({ piece }) => {
             };
 
             try {
-              resizedFile = await imageCompression(file, options);
+              resizedFile = await imageCompression(mediaItem, options);
+              storageRef = ref(firebaseService, `images/${v4()}.jpg`);
             } catch (error) {
               console.error("Error resizing the image:", error);
             }
@@ -123,6 +125,7 @@ const PortfolioItem = ({ piece }) => {
           }
 
           try {
+            debugger;
             const uploadTask = await uploadBytes(storageRef, resizedFile);
             const relativePath = storageRef.fullPath;
 
