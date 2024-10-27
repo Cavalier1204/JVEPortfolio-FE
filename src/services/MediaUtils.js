@@ -25,11 +25,10 @@ export const imageUploader = async (media) => {
 
         try {
           resizedFile = await imageCompression(file, options);
+          storageRef = ref(firebaseService, `images/${v4()}.jpg`);
         } catch (error) {
           console.error("Error resizing the image:", error);
         }
-
-        storageRef = ref(firebaseService, `images/${v4()}.jpg`);
       } else if (fileType === "video") {
         storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
       } else {

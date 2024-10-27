@@ -64,19 +64,21 @@ const CreatePage = () => {
 
   if (TokenManager.getClaims()) {
     return (
-      <div className="w-full max-w-md flex flex-col justify-center mb-10">
-        <ArtPieceForm
-          onSubmit={handleSubmit}
-          headerText="Portfolio item aanmaken"
-          titleHook={titleHook}
-          descriptionHook={descriptionHook}
-          yearHook={yearHook}
-          moduleHook={moduleHook}
-          subjectHook={subjectHook}
-          mediaHook={mediaHook}
-          onClose={() => navigate("/")}
-          loadingHook={loadingHook}
-        />
+      <div className="md:container md:mx-auto flex justify-center pt-5">
+        <div className="w-full max-w-md flex flex-col justify-center mb-10">
+          <ArtPieceForm
+            onSubmit={handleSubmit}
+            headerText="Portfolio item aanmaken"
+            titleHook={titleHook}
+            descriptionHook={descriptionHook}
+            yearHook={yearHook}
+            moduleHook={moduleHook}
+            subjectHook={subjectHook}
+            mediaHook={mediaHook}
+            onClose={() => navigate("/")}
+            loadingHook={loadingHook}
+          />
+        </div>
       </div>
     );
   } else {
