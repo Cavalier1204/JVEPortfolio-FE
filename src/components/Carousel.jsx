@@ -5,9 +5,6 @@ import "react-medium-image-zoom/dist/styles.css";
 
 export default function Carousel({ media }) {
   let [current, setCurrent] = useState(0);
-  const [loadingStates, setLoadingStates] = useState(
-    new Array(media.length).fill(true), // Initialize loading state for each item
-  );
 
   const previousSlide = () => {
     if (current === 0) setCurrent(media.length - 1);
@@ -18,15 +15,6 @@ export default function Carousel({ media }) {
     if (current === media.length - 1) setCurrent(0);
     else setCurrent(current + 1);
   };
-
-  const handleLoad = (index) => {
-    setLoadingStates((prev) => {
-      const newLoadingStates = [...prev];
-      newLoadingStates[index] = false;
-      return newLoadingStates;
-    });
-  };
-
   return (
     <div className="overflow-hidden relative h-full w-full">
       <div
@@ -44,35 +32,22 @@ export default function Carousel({ media }) {
             }}
             className="relative"
           >
-            {/* Loading spinner */}
-            {loadingStates[index] && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="w-8 h-8 border-4 border-t-transparent border-gray-300 rounded-full animate-spin"></div>
-              </div>
-            )}
             {file.locationReference.startsWith("images") ? (
               <>
                 <Zoom>
                   <img
-                    loading="lazy"
-                    className={`object-contain object-center h-full mx-auto cursor-zoom-in w-full ${
-                      loadingStates[index] ? "invisible" : "visible"
-                    }`}
-                    src={file.url}
-                    alt={`Image ${index + 1}`}
-                    onLoad={() => handleLoad(index)}
+                    className={`object-contain object-center h-full mx-auto cursor-zoom-in w-full`}
+                    src={`https://jve-portfolio-media.b-cdn.net/${file.locationReference}`}
                   />
                 </Zoom>
               </>
             ) : file.locationReference.startsWith("videos") ? (
               <video
-                loading="lazy"
                 className="object-contain object-center h-full mx-auto w-full"
                 controls
                 muted
                 key={index}
-                src={file.url}
-                onLoadedData={() => handleLoad(index)}
+                src={`https://jve-portfolio-media.b-cdn.net/${file.locationReference}`}
               />
             ) : null}
           </div>

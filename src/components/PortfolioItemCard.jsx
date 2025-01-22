@@ -1,23 +1,16 @@
 import Carousel from "./Carousel";
 import TokenManager from "../services/TokenManager";
-import { PencilIcon } from "@heroicons/react/24/outline";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import {
-  firebaseService,
-  deleteObject,
-  ref,
-  uploadBytes,
-} from "../services/Firebase";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
 import "../styles.css";
-import { fetchPreviewURL } from "../services/MediaUtils";
 import imageCompression from "browser-image-compression";
+import axios from "axios";
 
 const PortfolioItem = ({ piece }) => {
   const titleHook = useState(piece.title);
@@ -29,37 +22,10 @@ const PortfolioItem = ({ piece }) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isMediaConverted, setIsMediaConverted] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const loadingHook = useState(false);
-
-  useEffect(() => {
-    if (!isMediaConverted) {
-      const convertMedia = async () => {
-        const updatedMedia = [];
-        for (const mediaItem of piece.media) {
-          const { preview, url } = await fetchPreviewURL(
-            mediaItem.locationReference,
-          );
-          updatedMedia.push({
-            ...mediaItem,
-            preview,
-            url,
-          });
-        }
-
-        setIsMediaConverted(true);
-        piece.media = updatedMedia;
-        mediaHook[1](updatedMedia);
-      };
-
-      if (piece.media.length > 0) {
-        convertMedia();
-      }
-    }
-  }, [piece.media]);
 
   useEffect(() => {
     mediaHook[1](piece.media);
@@ -88,18 +54,12 @@ const PortfolioItem = ({ piece }) => {
 
     piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
-        const imageRef = ref(firebaseService, item.locationReference);
-        deleteObject(imageRef)
-          .then(() => {
-            deletedMedia.push(item.id);
-          })
-          .catch((e) => console.error(e));
+        deletedMedia.push(item.id);
       }
     });
 
     const unfilteredUpdatedMedia = await Promise.all(
       mediaHook[0].map(async (mediaItem, index) => {
-        debugger;
         if (mediaItem instanceof File) {
           const fileType = mediaItem.type.split("/")[0];
 
@@ -114,23 +74,29 @@ const PortfolioItem = ({ piece }) => {
 
             try {
               resizedFile = await imageCompression(mediaItem, options);
-              storageRef = ref(firebaseService, `images/${v4()}.jpg`);
+              storageRef = `images/${v4()}.jpg`;
             } catch (error) {
               console.error("Error resizing the image:", error);
             }
           } else if (fileType === "video") {
-            storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
+            storageRef = `videos/${v4()}.mp4`;
           } else {
             return;
           }
 
           try {
-            debugger;
-            const uploadTask = await uploadBytes(storageRef, resizedFile);
-            const relativePath = storageRef.fullPath;
-
+            const response = await axios.put(
+              `${process.env.REACT_APP_BUNNY_URL}/${storageRef}`,
+              resizedFile,
+              {
+                headers: {
+                  AccessKey: process.env.REACT_APP_BUNNY_KEY,
+                  "Content-Type": "application/octet-stream",
+                },
+              },
+            );
             newMedia.push({
-              locationReference: relativePath,
+              locationReference: storageRef,
               order: index + 1,
             });
             return null;
@@ -199,12 +165,6 @@ const PortfolioItem = ({ piece }) => {
       piece.id,
       TokenManager.getAccessToken(),
     )
-      .then(
-        piece.media.forEach((item) => {
-          const imageRef = ref(firebaseService, item.locationReference);
-          deleteObject(imageRef).catch((e) => console.error(e));
-        }),
-      )
       .then(() => {
         const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
         if (location.pathname === url) {
