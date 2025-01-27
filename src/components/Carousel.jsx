@@ -15,6 +15,7 @@ export default function Carousel({ media }) {
     if (current === media.length - 1) setCurrent(0);
     else setCurrent(current + 1);
   };
+
   return (
     <div className="overflow-hidden relative h-full w-full">
       <div

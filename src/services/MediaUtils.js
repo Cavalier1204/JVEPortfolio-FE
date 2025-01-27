@@ -43,7 +43,7 @@ export const imageUploader = async (media) => {
         );
         mediaFiles.push({
           locationReference: storageRef,
-          order: i + 1,
+          order: media.order ?? i + 1,
         });
       } catch (error) {
         console.error("Error uploading file:", error);
