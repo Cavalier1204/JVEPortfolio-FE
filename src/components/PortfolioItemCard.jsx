@@ -1,67 +1,32 @@
 import Carousel from "./Carousel";
 import TokenManager from "../services/TokenManager";
-import { PencilIcon } from "@heroicons/react/24/outline";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import { useEffect, useState } from "react";
-import { v4 } from "uuid";
-import {
-  firebaseService,
-  deleteObject,
-  ref,
-  uploadBytes,
-} from "../services/Firebase";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
 import "../styles.css";
-import { fetchPreviewURL } from "../services/MediaUtils";
-import imageCompression from "browser-image-compression";
+import { imageUploader } from "../services/MediaUtils";
 
 const PortfolioItem = ({ piece }) => {
   const titleHook = useState(piece.title);
   const descriptionHook = useState(piece.description);
   const yearHook = useState(piece.year);
   const moduleHook = useState(piece.module);
-  const mediaHook = useState(piece.media);
+  const mediaHook = useState(piece.media.sort((a, b) => a.order - b.order));
   const subjectHook = useState(piece.subject);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isMediaConverted, setIsMediaConverted] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const loadingHook = useState(false);
 
   useEffect(() => {
-    if (!isMediaConverted) {
-      const convertMedia = async () => {
-        const updatedMedia = [];
-        for (const mediaItem of piece.media) {
-          const { preview, url } = await fetchPreviewURL(
-            mediaItem.locationReference,
-          );
-          updatedMedia.push({
-            ...mediaItem,
-            preview,
-            url,
-          });
-        }
-
-        setIsMediaConverted(true);
-        piece.media = updatedMedia;
-        mediaHook[1](updatedMedia);
-      };
-
-      if (piece.media.length > 0) {
-        convertMedia();
-      }
-    }
-  }, [piece.media]);
-
-  useEffect(() => {
+    piece.media.sort((a, b) => a.order - b.order);
     mediaHook[1](piece.media);
   }, [piece.media]);
 
@@ -85,71 +50,38 @@ const PortfolioItem = ({ piece }) => {
 
     let deletedMedia = [];
     let newMedia = [];
+    let updatedMedia = [];
 
     piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
-        const imageRef = ref(firebaseService, item.locationReference);
-        deleteObject(imageRef)
-          .then(() => {
-            deletedMedia.push(item.id);
-          })
-          .catch((e) => console.error(e));
+        deletedMedia.push(item.id);
       }
     });
 
-    const unfilteredUpdatedMedia = await Promise.all(
-      mediaHook[0].map(async (mediaItem, index) => {
-        debugger;
-        if (mediaItem instanceof File) {
-          const fileType = mediaItem.type.split("/")[0];
+    mediaHook[0].map((item, index) => {
+      if (item instanceof File) {
+        newMedia.push({ ...item, order: index + 1 });
+        return;
+      }
 
-          let storageRef;
-          let resizedFile = mediaItem;
+      console.log(mediaHook[0]);
 
-          if (fileType === "image") {
-            const options = {
-              maxWidthOrHeight: 1920,
-              useWebWorker: true,
-            };
+      updatedMedia.push({
+        id: item.id,
+        artPieceId: item.artPieceId,
+        createdAt: item.createdAt,
+        locationReference: item.locationReference,
+        order: index + 1,
+      });
+    });
 
-            try {
-              resizedFile = await imageCompression(mediaItem, options);
-              storageRef = ref(firebaseService, `images/${v4()}.jpg`);
-            } catch (error) {
-              console.error("Error resizing the image:", error);
-            }
-          } else if (fileType === "video") {
-            storageRef = ref(firebaseService, `videos/${v4()}.mp4`);
-          } else {
-            return;
-          }
-
-          try {
-            debugger;
-            const uploadTask = await uploadBytes(storageRef, resizedFile);
-            const relativePath = storageRef.fullPath;
-
-            newMedia.push({
-              locationReference: relativePath,
-              order: index + 1,
-            });
-            return null;
-          } catch (error) {
-            console.error("Error uploading file:", error);
-          }
-        } else {
-          return {
-            id: mediaItem.id,
-            artPieceId: mediaItem.artPieceId,
-            createdAt: mediaItem.createdAt,
-            locationReference: mediaItem.locationReference,
-            order: index + 1,
-          };
-        }
-      }),
-    );
-
-    const updatedMedia = unfilteredUpdatedMedia.filter((item) => item !== null);
+    try {
+      if (newMedia.length > 0) {
+        newMedia = imageUploader(newMedia);
+      }
+    } catch (e) {
+      console.log("Error uploading new media:", e);
+    }
 
     const id = piece.id;
     const title = titleHook[0];
@@ -168,6 +100,7 @@ const PortfolioItem = ({ piece }) => {
 
     const subjectParam = SubjectEnumToPath(subject);
 
+    debugger;
     await ArtPieceManager.updateMedia(
       id,
       updatedMedia,
@@ -199,12 +132,6 @@ const PortfolioItem = ({ piece }) => {
       piece.id,
       TokenManager.getAccessToken(),
     )
-      .then(
-        piece.media.forEach((item) => {
-          const imageRef = ref(firebaseService, item.locationReference);
-          deleteObject(imageRef).catch((e) => console.error(e));
-        }),
-      )
       .then(() => {
         const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
         if (location.pathname === url) {

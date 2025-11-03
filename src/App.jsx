@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route, HashRouter, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import CreatePage from "./pages/CreateArtPiecePage";
@@ -13,7 +13,7 @@ import { AuthProvider } from "./modules/AuthContext";
 function App() {
   return (
     <AuthProvider>
-      <HashRouter>
+      <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -35,7 +35,7 @@ function App() {
           />
           <Route path="/portfolio" element={<PortfolioPage />} />
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

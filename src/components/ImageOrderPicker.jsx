@@ -5,7 +5,14 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 
 const SortableItem = SortableElement(({ value, onDelete }) => (
   <div className="image-item z-10">
-    <img src={value.preview} alt="Preview" className="image-preview" />
+    <img
+      src={
+        value.preview ??
+        `https://jve-portfolio-media.b-cdn.net/${value.locationReference}`
+      }
+      alt="Preview"
+      className="image-preview"
+    />
     <div
       onClick={() => onDelete(value)}
       className="bg-red-600 text-white p-2 rounded border-2 border-black shadow-md trash-icon w-fit mx-auto"
