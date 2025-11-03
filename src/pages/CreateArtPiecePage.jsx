@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { firebaseService, ref, uploadBytes } from "../services/Firebase";
-import { v4 } from "uuid";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
 import { Navigate, useNavigate } from "react-router-dom";

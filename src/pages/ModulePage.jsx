@@ -14,7 +14,7 @@ const ModulePage = () => {
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
               <img
                 className="lg:h-48 md:h-36 w-full object-cover object-center"
-                src="/werkpraktijk.png"
+                src="/werkpraktijk.jpg"
                 alt="Werkpraktijk vak"
               />
               <div className="px-6 pb-2 pt-5">
