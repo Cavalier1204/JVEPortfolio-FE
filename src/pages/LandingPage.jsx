@@ -1,4 +1,11 @@
+import { useEffect } from "react";
+import checkServerHealth from "../services/HealthUtils";
+
 const LandingPage = () => {
+  useEffect(() => {
+    checkServerHealth()
+  }, [])
+
   return (
     <div
       className="w-full flex flex-col lg:flex-row bg-[#222222] text-white"
