@@ -30,6 +30,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    needs: build
     services:
       postgres:
         image: postgres:15
@@ -83,7 +84,7 @@ jobs:
       - name: Wait for backend to be ready
         run: |
           for i in {1..15}; do
-            curl -f http://localhost:3000/health && break
+            curl -f http://localhost:8000/health && break
             echo "Waiting for backend..."
             sleep 2
           done
