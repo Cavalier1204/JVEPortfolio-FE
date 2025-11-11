@@ -90,7 +90,7 @@ jobs:
           done
 
       - name: Install frontend dependencies
-        run: npm ci
+        run: npm ci --force
 
       - name: Run frontend E2E tests
         run: npm run test:e2e
