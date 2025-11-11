@@ -103,3 +103,9 @@ jobs:
 
       - name: Run frontend E2E tests
         run: npx playwright test --project=${{ matrix.browser }}
+
+      - name: Upload test resulst
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test results ${{ matrix.browser }}
+          path: test-results
