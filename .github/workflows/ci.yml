@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [test-setup]
+  pull_request:
+    branches: [test-setup]
+  workflow_dispatch:
+
+jobs:
+  # --- BUILD JOB ---
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout frontend repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vite app
+        run: npm run build
+
+      # Upload build artifact for the next job
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+
+  # --- TEST JOB ---
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - name: Checkout frontend repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      # Download the build output from previous job
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+
+      # --- BACKEND ---
+      - name: Checkout backend repository
+        uses: actions/checkout@v4
+        with:
+          repository: Cavalier1204/JVEPortfolio-BE
+          path: backend
+          token: ${{ secrets.BACKEND_PAT }}
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Start backend
+        run: npm start &
+        working-directory: backend
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend to start..."
+          sleep 10
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests on ${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }}
