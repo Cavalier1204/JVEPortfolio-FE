@@ -49,7 +49,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
       FRONTEND_URL: http://localhost:5173
-      REACT_APP_API_LINK: http://localhost:3000
+      REACT_APP_API_LINK: http://localhost:8000
     steps:
       - name: Checkout frontend repository
         uses: actions/checkout@v4
