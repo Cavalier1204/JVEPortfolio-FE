@@ -125,3 +125,8 @@ jobs:
           name: playwright-report-${{ matrix.browser }}
           path: test-results/${{ matrix.browser }}
           retention-days: 30
+
+      - name: List Playwright report files
+        run: |
+          ls -R playwright-report/
+          ls -R test-results/
