@@ -124,6 +124,6 @@ jobs:
         with:
           name: playwright-${{ matrix.browser }}
           path: |
-            test-results/${{ matrix.browser }}
-            playwright-report/${{ matrix.browser }}
+            test-results/
+            playwright-report/
           retention-days: 30
