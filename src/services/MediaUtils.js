@@ -31,7 +31,7 @@ export const imageUploader = async (media) => {
       }
 
       try {
-        const response = await axios.put(
+        await axios.put(
           `${process.env.REACT_APP_BUNNY_URL}/${storageRef}`,
           resizedFile,
           {

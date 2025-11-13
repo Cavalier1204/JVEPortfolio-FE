@@ -2,13 +2,29 @@ name: CI
 
 on:
   push:
-    branches: [test-setup]
+    branches: ["**"]
   pull_request:
-    branches: [test-setup]
+    branches: ["**"]
   workflow_dispatch:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout frontend repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci --force
+      - name: Run ESLint
+        run: npm run lint
+
   build:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout frontend repository
@@ -95,16 +111,15 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci --force
 
-      - name: Install Playwright
-        run: npx playwright install
-
-      - name: Install Playwright dependencies
-        run: npx playwright install-deps ${{ matrix.browser }}
+      - name: Install Playwright & dependencies
+        run: |
+          npx playwright install
+          npx playwright install-deps ${{ matrix.browser }}
 
       - name: Run frontend E2E tests
         run: npx playwright test --project=${{ matrix.browser }}
 
-      - name: Upload test resulst
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: Test results ${{ matrix.browser }}
