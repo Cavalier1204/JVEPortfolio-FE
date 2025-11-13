@@ -12,6 +12,7 @@ export default function ArtPieceForm({
   mediaHook,
   onClose,
   loadingHook,
+  dataTestId,
 }) {
   const [selectedYear, setSelectedYear] = yearHook;
 
@@ -22,7 +23,7 @@ export default function ArtPieceForm({
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} data-testid={dataTestId}>
       <h3>{headerText}</h3>
       <label htmlFor="title" className="block text-gray-500 font-bold mb-5">
         Titel
@@ -34,6 +35,7 @@ export default function ArtPieceForm({
           onChange={(e) => titleHook[1](e.target.value)}
           required
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+          data-testid="titleInput"
         />
       </label>
 
@@ -50,6 +52,7 @@ export default function ArtPieceForm({
           onChange={(e) => descriptionHook[1](e.target.value)}
           required
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+          data-testid="descriptionInput"
         />
       </label>
 
@@ -62,6 +65,7 @@ export default function ArtPieceForm({
           onChange={handleYearChange}
           required
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+          data-testid="yearSelect"
         >
           <option value={1}>Leerjaar 1</option>
           <option value={2}>Leerjaar 2</option>
@@ -82,6 +86,7 @@ export default function ArtPieceForm({
           className={`bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ${
             !selectedYear ? "opacity-50 cursor-not-allowed" : ""
           }`}
+          data-testid="moduleSelect"
         >
           {selectedYear &&
             schoolYears[selectedYear].map((module) => (
@@ -100,6 +105,7 @@ export default function ArtPieceForm({
           onChange={(e) => subjectHook[1](e.target.value)}
           value={subjectHook[0]}
           className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+          data-testid="subjectSelect"
         >
           <option value="WERKPRAKTIJK_1">Werkpraktijk 1</option>
           <option value="WERKPRAKTIJK_2">Werkpraktijk 2</option>
@@ -149,6 +155,7 @@ export default function ArtPieceForm({
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md md:w-1/4"
             type="submit"
+            data-testid="submitButton"
           >
             Opslaan
           </button>

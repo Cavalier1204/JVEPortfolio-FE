@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const publicUrl = `${process.env.REACT_APP_API_LINK}/public`;
-const protectedUrl = `${process.env.REACT_APP_API_LINK}/api`;
+const publicUrl = `${import.meta.env.VITE_API_LINK}/public`;
+const protectedUrl = `${import.meta.env.VITE_API_LINK}/api`;
 
 // Get one
 const getArtPiece = async (id) => {

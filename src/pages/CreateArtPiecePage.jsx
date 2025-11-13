@@ -75,6 +75,7 @@ const CreatePage = () => {
             mediaHook={mediaHook}
             onClose={() => navigate("/")}
             loadingHook={loadingHook}
+            dataTestId="uploadForm"
           />
         </div>
       </div>
