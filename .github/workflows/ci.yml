@@ -117,18 +117,13 @@ jobs:
           npx playwright install-deps ${{ matrix.browser }}
 
       - name: Run frontend E2E tests
-        run: npx playwright test --project=${{ matrix.browser }} --reporter=list,json,html --output=test-results/${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=list,json,html
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - name: Upload Playwright artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-${{ matrix.browser }}
           path: |
             test-results/${{ matrix.browser }}
             playwright-report/${{ matrix.browser }}
           retention-days: 30
-
-      - name: List Playwright report files
-        run: |
-          ls -R playwright-report/
-          ls -R test-results/
