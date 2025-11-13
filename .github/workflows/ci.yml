@@ -117,10 +117,7 @@ jobs:
           npx playwright install-deps ${{ matrix.browser }}
 
       - name: Run frontend E2E tests
-        run: npx playwright test \
-          --project=${{ matrix.browser }} \
-          --reporter=list,json,html \
-          --output=test-results/${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=list,json,html --output=test-results/${{ matrix.browser }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
