@@ -31,12 +31,12 @@ export const imageUploader = async (media) => {
       }
 
       try {
-        const response = await axios.put(
-          `${process.env.REACT_APP_BUNNY_URL}/${storageRef}`,
+        await axios.put(
+          `${import.meta.env.VITE_BUNNY_URL}/${storageRef}`,
           resizedFile,
           {
             headers: {
-              AccessKey: process.env.REACT_APP_BUNNY_KEY,
+              AccessKey: import.meta.env.VITE_BUNNY_KEY,
               "Content-Type": "application/octet-stream",
             },
           },

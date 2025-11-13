@@ -7,6 +7,7 @@ import { useAuth } from "../modules/AuthContext";
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const { login } = useAuth();
 
@@ -33,9 +34,11 @@ const LoginPage = () => {
         console.error(error);
         setIsLoading(false);
         if (error.response && error.response.status === 401) {
-          alert("Gebruikersnaam en/of wachtwoord incorrect.");
+          setLoginError("Gebruikersnaam en/of wachtwoord incorrect.");
+          setPassword("");
+          document.getElementById("emailAddress").focus();
         } else {
-          alert("Er is iets fout gegaan, probeer het later opnieuw.");
+          setLoginError("Er is iets fout gegaan, probeer het later opnieuw.");
         }
       });
   };
@@ -55,6 +58,7 @@ const LoginPage = () => {
             placeholder="E-mailadres"
             required
             id="emailAddress"
+            data-testid="usernameInput"
           />
         </label>
         <label htmlFor="password" className="block">
@@ -67,8 +71,18 @@ const LoginPage = () => {
             placeholder="Wachtwoord"
             required
             id="password"
+            data-testid="passwordInput"
           />
         </label>
+        {loginError && (
+          <p
+            data-testid="loginError"
+            className="text-red-600 font-medium mb-3 text-center"
+          >
+            {loginError}
+          </p>
+        )}
+
         {isLoading ? (
           <button
             type="button"
@@ -96,6 +110,7 @@ const LoginPage = () => {
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded border-2 border-blue-700 shadow-md"
             type="submit"
+            data-testid="loginButton"
           >
             Login
           </button>
