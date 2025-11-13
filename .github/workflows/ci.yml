@@ -123,5 +123,5 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.browser }}
-          path: playwright-report/${{ matrix.browser }}
+          path: test-results/${{ matrix.browser }}
           retention-days: 30
