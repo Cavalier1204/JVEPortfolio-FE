@@ -67,7 +67,7 @@ jobs:
     env:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-      FRONTEND_URL: http://localhost:5173
+      ALLOWED_ORIGINS: '["http://localhost:5173"]'
       VITE_API_LINK: http://localhost:8000
     steps:
       - name: Checkout frontend repository
