@@ -38,7 +38,7 @@ export default function Carousel({ media }) {
                 <Zoom>
                   <img
                     className={`object-contain object-center h-full mx-auto cursor-zoom-in w-full`}
-                    src={`https://jve-portfolio-media.b-cdn.net/${file.locationReference}`}
+                    src={`${VITE_BUNNY_CDN_URL}/${file.locationReference}`}
                   />
                 </Zoom>
               </>
@@ -48,7 +48,7 @@ export default function Carousel({ media }) {
                 controls
                 muted
                 key={index}
-                src={`https://jve-portfolio-media.b-cdn.net/${file.locationReference}`}
+                src={`${VITE_BUNNY_CDN_URL}/${file.locationReference}`}
               />
             ) : null}
           </div>
