@@ -8,7 +8,7 @@ const SortableItem = SortableElement(({ value, onDelete }) => (
     <img
       src={
         value.preview ??
-        `https://jve-portfolio-media.b-cdn.net/${value.locationReference}`
+        `${import.meta.env.VITE_BUNNY_CDN_URL}/${value.locationReference}`
       }
       alt="Preview"
       className="image-preview"
