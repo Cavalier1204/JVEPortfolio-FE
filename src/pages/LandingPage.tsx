@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import checkServerHealth from "../services/HealthUtils";
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
   useEffect(() => {
-    checkServerHealth()
-  }, [])
+    checkServerHealth();
+  }, []);
 
   return (
     <div

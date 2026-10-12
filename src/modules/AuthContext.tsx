@@ -1,10 +1,13 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import TokenManager from "../services/TokenManager";
+import { AuthContextType, AuthState } from "../types";
 
-const AuthContext = createContext();
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
     claims: null,
   });
@@ -19,11 +22,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (token) => {
+  const login = (_token?: string) => {
     const claims = TokenManager.getClaims();
     setAuthState({
       isAuthenticated: true,
-      claims,
+      claims: claims ?? null,
     });
   };
 
@@ -42,4 +45,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

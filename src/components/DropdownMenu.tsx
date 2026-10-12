@@ -1,24 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bars3Icon } from "@heroicons/react/20/solid";
+import { SchoolYears } from "../types";
 
-const DropdownMenu = ({ schoolYears }) => {
+interface DropdownMenuProps {
+  schoolYears: SchoolYears;
+}
+
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ schoolYears }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openYear, setOpenYear] = useState(null);
-  const dropdownRef = useRef(null);
+  const [openYear, setOpenYear] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
     setOpenYear(null);
   };
 
-  const handleYearHover = (yearNumber) => {
+  const handleYearHover = (yearNumber: string | null) => {
     setOpenYear(yearNumber);
   };
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setOpenYear(null);
       }
@@ -30,7 +38,6 @@ const DropdownMenu = ({ schoolYears }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     }
 
-    // Cleanup the event listener on component unmount
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
@@ -41,7 +48,7 @@ const DropdownMenu = ({ schoolYears }) => {
       <div className="h-16 w-16 bg-[#a1a6a2] hover:bg-[#8f9490] rounded flex justify-center items-center">
         <Bars3Icon
           onClick={toggleDropdown}
-          className="h-12 w-12 text-white"
+          className="h-12 w-12 text-white cursor-pointer"
           aria-hidden="true"
         />
       </div>
@@ -57,7 +64,7 @@ const DropdownMenu = ({ schoolYears }) => {
                     openYear === year
                       ? "bg-gray-200 text-gray-900"
                       : "text-gray-700"
-                  } block px-4 py-2 text-sm`}
+                  } block px-4 py-2 text-sm cursor-default`}
                 >
                   Leerjaar {year}
                 </div>
@@ -86,6 +93,7 @@ const DropdownMenu = ({ schoolYears }) => {
               to="/portfolio"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               onMouseEnter={() => handleYearHover(null)}
+              onClick={() => toggleDropdown()}
             >
               Officieel portfolio
             </Link>

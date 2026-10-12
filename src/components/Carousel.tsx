@@ -1,10 +1,14 @@
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import Zoom from "react-medium-image-zoom";
-import "react-medium-image-zoom/dist/styles.css";
+import { MediaItem } from "../types";
 
-export default function Carousel({ media }) {
-  let [current, setCurrent] = useState(0);
+interface CarouselProps {
+  media: MediaItem[];
+}
+
+export default function Carousel({ media }: CarouselProps) {
+  const [current, setCurrent] = useState(0);
 
   const previousSlide = () => {
     if (current === 0) setCurrent(media.length - 1);
@@ -34,14 +38,13 @@ export default function Carousel({ media }) {
             className="relative"
           >
             {file.locationReference.startsWith("images") ? (
-              <>
-                <Zoom>
-                  <img
-                    className={`object-contain object-center h-full mx-auto cursor-zoom-in w-full`}
-                    src={`${import.meta.env.VITE_BUNNY_CDN_URL}/${file.locationReference}`}
-                  />
-                </Zoom>
-              </>
+              <Zoom>
+                <img
+                  className="object-contain object-center h-full mx-auto cursor-zoom-in w-full"
+                  src={`${import.meta.env.VITE_BUNNY_CDN_URL}/${file.locationReference}`}
+                  alt=""
+                />
+              </Zoom>
             ) : file.locationReference.startsWith("videos") ? (
               <video
                 className="object-contain object-center h-full mx-auto w-full"

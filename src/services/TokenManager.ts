@@ -1,24 +1,26 @@
 import { jwtDecode } from "jwt-decode";
+import { Claims } from "../types";
 
-function getAccessToken() {
+function getAccessToken(): string | null {
   return sessionStorage.getItem("accessToken");
 }
 
-function getClaims() {
-  if (!sessionStorage.getItem("claims")) {
+function getClaims(): Claims | undefined {
+  const claims = sessionStorage.getItem("claims");
+  if (!claims) {
     return undefined;
   }
-  return JSON.parse(sessionStorage.getItem("claims"));
+  return JSON.parse(claims) as Claims;
 }
 
-function setAccessToken(token) {
+function setAccessToken(token: string): Claims {
   sessionStorage.setItem("accessToken", token);
-  const claims = jwtDecode(token);
+  const claims = jwtDecode<Claims>(token);
   sessionStorage.setItem("claims", JSON.stringify(claims));
   return claims;
 }
 
-function clear() {
+function clear(): void {
   sessionStorage.removeItem("accessToken");
   sessionStorage.removeItem("claims");
 }

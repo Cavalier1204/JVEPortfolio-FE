@@ -1,4 +1,4 @@
-export default function SubjectEnumToPath(subjectEnum) {
+export default function SubjectEnumToPath(subjectEnum: string): string {
   switch (subjectEnum) {
     case "WERKPRAKTIJK_1":
     case "WERKPRAKTIJK_2":

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ArtPieceManager from "../services/ArtPieceManager";
 import TokenManager from "../services/TokenManager";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -6,15 +6,15 @@ import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
 import { imageUploader } from "../services/MediaUtils";
 
-const CreatePage = () => {
-  const titleHook = useState("");
-  const descriptionHook = useState("");
-  const yearHook = useState(1);
-  const moduleHook = useState(1);
-  const mediaHook = useState([]);
-  const subjectHook = useState("WERKPRAKTIJK_1");
+const CreatePage: React.FC = () => {
+  const titleHook = useState<string>("");
+  const descriptionHook = useState<string>("");
+  const yearHook = useState<number | string>(1);
+  const moduleHook = useState<number | string>(1);
+  const mediaHook = useState<any[]>([]);
+  const subjectHook = useState<string>("WERKPRAKTIJK_1");
 
-  const loadingHook = useState(false);
+  const loadingHook = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -22,9 +22,9 @@ const CreatePage = () => {
     if (!TokenManager.getClaims()) {
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loadingHook[1](true);
 
@@ -33,12 +33,12 @@ const CreatePage = () => {
 
       const title = titleHook[0];
       const description = descriptionHook[0];
-      const year = parseInt(yearHook[0]);
-      const module = parseInt(moduleHook[0]);
+      const year = Number(yearHook[0]);
+      const module = Number(moduleHook[0]);
       const subject = subjectHook[0];
 
       try {
-        const newArtPiece = await ArtPieceManager.saveArtPiece(
+        await ArtPieceManager.saveArtPiece(
           {
             title,
             description,

@@ -1,33 +1,39 @@
+import React, { useEffect, useState } from "react";
 import Carousel from "./Carousel";
 import TokenManager from "../services/TokenManager";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
-import { useEffect, useState } from "react";
 import ArtPieceManager from "../services/ArtPieceManager";
 import { useLocation, useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "./ArtPieceForm";
-import "../styles.css";
 import { imageUploader } from "../services/MediaUtils";
+import { ArtPiece, MediaItem } from "../types";
 
-const PortfolioItem = ({ piece }) => {
-  const titleHook = useState(piece.title);
-  const descriptionHook = useState(piece.description);
-  const yearHook = useState(piece.year);
-  const moduleHook = useState(piece.module);
-  const mediaHook = useState(piece.media.sort((a, b) => a.order - b.order));
-  const subjectHook = useState(piece.subject);
+interface PortfolioItemProps {
+  piece: ArtPiece;
+}
 
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
+  const titleHook = useState<string>(piece.title);
+  const descriptionHook = useState<string>(piece.description);
+  const yearHook = useState<number | string>(piece.year);
+  const moduleHook = useState<number | string>(piece.module);
+  const mediaHook = useState<MediaItem[]>(
+    [...piece.media].sort((a, b) => a.order - b.order),
+  );
+  const subjectHook = useState<string>(piece.subject);
+
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const loadingHook = useState(false);
+  const loadingHook = useState<boolean>(false);
 
   useEffect(() => {
-    piece.media.sort((a, b) => a.order - b.order);
-    mediaHook[1](piece.media);
+    const sortedMedia = [...piece.media].sort((a, b) => a.order - b.order);
+    mediaHook[1](sortedMedia);
   }, [piece.media]);
 
   const openEditModal = () => {
@@ -44,27 +50,27 @@ const PortfolioItem = ({ piece }) => {
     setShowDeleteModal(true);
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loadingHook[1](true);
 
-    let deletedMedia = [];
-    let newMedia = [];
-    let updatedMedia = [];
+    const deletedMedia: (string | number)[] = [];
+    let newMedia: any[] = [];
+    const updatedMedia: any[] = [];
 
     piece.media.forEach((item) => {
       if (!mediaHook[0].includes(item)) {
-        deletedMedia.push(item.id);
+        if (item.id !== undefined) {
+          deletedMedia.push(item.id);
+        }
       }
     });
 
-    mediaHook[0].map((item, index) => {
+    mediaHook[0].forEach((item: any, index: number) => {
       if (item instanceof File) {
         newMedia.push({ ...item, order: index + 1 });
         return;
       }
-
-      console.log(mediaHook[0]);
 
       updatedMedia.push({
         id: item.id,
@@ -77,7 +83,8 @@ const PortfolioItem = ({ piece }) => {
 
     try {
       if (newMedia.length > 0) {
-        newMedia = imageUploader(newMedia);
+        const uploadRes = await imageUploader(newMedia);
+        newMedia = uploadRes.mediaFiles;
       }
     } catch (e) {
       console.log("Error uploading new media:", e);
@@ -86,8 +93,8 @@ const PortfolioItem = ({ piece }) => {
     const id = piece.id;
     const title = titleHook[0];
     const description = descriptionHook[0];
-    const year = parseInt(yearHook[0]);
-    const module = parseInt(moduleHook[0]);
+    const year = Number(yearHook[0]);
+    const module = Number(moduleHook[0]);
     const subject = subjectHook[0];
 
     await ArtPieceManager.updateArtPiece(
@@ -100,7 +107,6 @@ const PortfolioItem = ({ piece }) => {
 
     const subjectParam = SubjectEnumToPath(subject);
 
-    debugger;
     await ArtPieceManager.updateMedia(
       id,
       updatedMedia,
@@ -122,7 +128,7 @@ const PortfolioItem = ({ piece }) => {
       });
   };
 
-  const handleDelete = async (e) => {
+  const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loadingHook[1](true);
 
@@ -171,13 +177,13 @@ const PortfolioItem = ({ piece }) => {
             <>
               <div
                 data-testid="deleteButton"
-                className="hidden group-hover:block absolute p-2 border-black border-solid border-2 rounded bg-red-600 hover:bg-red-700 bottom-6 left-6 text-white"
+                className="hidden group-hover:block absolute p-2 border-black border-solid border-2 rounded bg-red-600 hover:bg-red-700 bottom-6 left-6 text-white cursor-pointer"
                 onClick={() => openDeleteModal()}
               >
                 <TrashIcon className="h-6" />
               </div>
               <div
-                className="hidden group-hover:block absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6"
+                className="hidden group-hover:block absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6 cursor-pointer"
                 onClick={() => openEditModal()}
               >
                 <PencilIcon className="h-6" />
@@ -210,6 +216,7 @@ const PortfolioItem = ({ piece }) => {
                 </h4>
                 <div className="flex justify-between">
                   <button
+                    type="button"
                     onClick={() => setShowDeleteModal(false)}
                     className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-fit"
                   >

@@ -1,7 +1,8 @@
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 
-const ModulePage = () => {
-  const { year, module } = useParams();
+const ModulePage: React.FC = () => {
+  const { year, module } = useParams<{ year: string; module: string }>();
 
   return (
     <div className="md:container md:mx-auto flex justify-center pt-5">

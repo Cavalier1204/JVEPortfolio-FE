@@ -1,16 +1,24 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ArtPieceManager from "../services/ArtPieceManager";
 import PortfolioItem from "../components/PortfolioItemCard";
-import modules from "../data/modules";
+import rawModules from "../data/modules.json";
+import { ArtPiece, ModulesMap } from "../types";
 
-const SubjectPage = () => {
-  const { year, module, subject } = useParams();
-  const [artPieces, setArtPieces] = useState([]);
-  const [loading, setLoading] = useState(true);
+const modules = rawModules as ModulesMap;
+
+const SubjectPage: React.FC = () => {
+  const { year, module, subject } = useParams<{
+    year: string;
+    module: string;
+    subject: string;
+  }>();
+  const [artPieces, setArtPieces] = useState<ArtPiece[]>([]);
+  const [, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getData = async () => {
+      if (!year || !module || !subject) return;
       setLoading(true);
       try {
         const res = await ArtPieceManager.getArtPiecesByYearByModuleBySubject({
@@ -21,7 +29,6 @@ const SubjectPage = () => {
         setArtPieces(res.data);
       } catch (error) {
         console.error("Error fetching art pieces:", error);
-        // Handle error, maybe navigate to an error page
       } finally {
         setLoading(false);
       }
@@ -30,7 +37,12 @@ const SubjectPage = () => {
     getData();
   }, [year, module, subject]);
 
-  if (artPieces == null || artPieces.length === 0 || !(subject in modules)) {
+  if (
+    !subject ||
+    artPieces == null ||
+    artPieces.length === 0 ||
+    !(subject in modules)
+  ) {
     return (
       <div className="md:container md:mx-auto flex justify-center pt-5">
         <p>Geen portfolio items gevonden.</p>
@@ -46,11 +58,11 @@ const SubjectPage = () => {
             <h2 className="mx-auto w-fit font-light">{displayName}</h2>
             <div
               className="w-1/5 bg-[#b5bab6] mx-auto landingline mb-5"
-              height={2}
+              style={{ height: "2px" }}
             />
             <div className="flex flex-wrap -m-4 justify-center">
               {artPieces
-                .filter((piece) => piece.subject == enumName)
+                .filter((piece) => piece.subject === enumName)
                 .map((piece) => (
                   <PortfolioItem piece={piece} key={piece.id} />
                 ))}

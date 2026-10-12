@@ -1,5 +1,23 @@
+import React from "react";
 import ImageOrderPicker from "./ImageOrderPicker";
-import schoolYears from "../data/year-structure.json";
+import rawSchoolYears from "../data/year-structure.json";
+import { SchoolYears } from "../types";
+
+const schoolYears = rawSchoolYears as SchoolYears;
+
+export interface ArtPieceFormProps {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  headerText: string;
+  titleHook: [string, React.Dispatch<React.SetStateAction<string>>];
+  descriptionHook: [string, React.Dispatch<React.SetStateAction<string>>];
+  yearHook: [number | string, React.Dispatch<React.SetStateAction<any>>];
+  moduleHook: [number | string, React.Dispatch<React.SetStateAction<any>>];
+  subjectHook: [string, React.Dispatch<React.SetStateAction<string>>];
+  mediaHook: [any[], React.Dispatch<React.SetStateAction<any[]>>];
+  onClose: () => void;
+  loadingHook: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+  dataTestId?: string;
+}
 
 export default function ArtPieceForm({
   onSubmit,
@@ -13,14 +31,16 @@ export default function ArtPieceForm({
   onClose,
   loadingHook,
   dataTestId,
-}) {
+}: ArtPieceFormProps) {
   const [selectedYear, setSelectedYear] = yearHook;
 
-  const handleYearChange = (e) => {
-    const selectedYear = e.target.value;
-    setSelectedYear(selectedYear);
-    moduleHook[1](selectedYear * 4 - 3);
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const yearValue = e.target.value;
+    setSelectedYear(yearValue);
+    moduleHook[1](Number(yearValue) * 4 - 3);
   };
+
+  const currentYearModules = schoolYears[String(selectedYear)] || [];
 
   return (
     <form onSubmit={onSubmit} data-testid={dataTestId}>
@@ -45,7 +65,6 @@ export default function ArtPieceForm({
       >
         Beschrijving
         <textarea
-          type="text"
           name="description"
           id="description"
           value={descriptionHook[0]}
@@ -89,7 +108,7 @@ export default function ArtPieceForm({
           data-testid="moduleSelect"
         >
           {selectedYear &&
-            schoolYears[selectedYear].map((module) => (
+            currentYearModules.map((module) => (
               <option key={module} value={module}>
                 Module {module}
               </option>
@@ -123,6 +142,7 @@ export default function ArtPieceForm({
 
       <div className="flex justify-between">
         <button
+          type="button"
           onClick={onClose}
           className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-1/4"
         >

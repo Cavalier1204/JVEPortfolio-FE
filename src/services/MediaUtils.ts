@@ -2,15 +2,22 @@ import { v4 } from "uuid";
 import imageCompression from "browser-image-compression";
 import axios from "axios";
 
-export const imageUploader = async (media) => {
-  const mediaFiles = [];
+export interface UploadedMediaItem {
+  locationReference: string;
+  order: number;
+}
+
+export const imageUploader = async (
+  media: any[] | null,
+): Promise<{ mediaFiles: UploadedMediaItem[] }> => {
+  const mediaFiles: UploadedMediaItem[] = [];
   if (media !== null) {
     for (let i = 0; i < media.length; i++) {
       const file = media[i];
-      const fileType = file.type.split("/")[0];
+      const fileType = file.type ? file.type.split("/")[0] : "";
 
-      let storageRef;
-      let resizedFile = file;
+      let storageRef: string;
+      let resizedFile: any = file;
 
       if (fileType === "image") {
         const options = {
@@ -23,6 +30,7 @@ export const imageUploader = async (media) => {
           storageRef = `images/${v4()}.jpg`;
         } catch (error) {
           console.error("Error resizing the image:", error);
+          continue;
         }
       } else if (fileType === "video") {
         storageRef = `videos/${v4()}.mp4`;
@@ -43,7 +51,7 @@ export const imageUploader = async (media) => {
         );
         mediaFiles.push({
           locationReference: storageRef,
-          order: media.order ?? i + 1,
+          order: file.order ?? i + 1,
         });
       } catch (error) {
         console.error("Error uploading file:", error);

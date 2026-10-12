@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserManager from "../services/UserManager";
 import { useNavigate } from "react-router-dom";
 import TokenManager from "../services/TokenManager";
 import { useAuth } from "../modules/AuthContext";
 
-const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
+const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
 
   const { login } = useAuth();
 
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (TokenManager.getClaims()) {
       navigate("/");
       window.location.reload();
     }
-  }, []);
+  }, [navigate]);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     UserManager.signin(username, password)
       .then((token) => {
-        login(token);
+        login(token as any);
         navigate("/");
       })
       .catch((error) => {
@@ -36,7 +36,7 @@ const LoginPage = () => {
         if (error.response && error.response.status === 401) {
           setLoginError("Gebruikersnaam en/of wachtwoord incorrect.");
           setPassword("");
-          document.getElementById("emailAddress").focus();
+          document.getElementById("emailAddress")?.focus();
         } else {
           setLoginError("Er is iets fout gegaan, probeer het later opnieuw.");
         }
