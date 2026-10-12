@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { useAuth } from "../modules/AuthContext";
+import { useAuth } from "../modules/useAuth";
 import schoolYears from "../data/year-structure.json";
 import { SchoolYears } from "../types";
 
 const Navbar: React.FC = () => {
-  const { authState } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="w-full bg-[#b5bab6] p-2 shadow-md">
@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
             <h3 className="font-light">JVE</h3>
           </Link>
         </div>
-        {authState.isAuthenticated && authState.claims && (
+        {isAuthenticated && (
           <Link
             to="/upload"
             className="h-16 w-16 bg-[#a1a6a2] hover:bg-[#8f9490] rounded flex justify-center items-center"

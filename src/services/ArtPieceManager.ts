@@ -1,8 +1,11 @@
-import axios from "axios";
-import { ArtPiece, MediaItem } from "../types";
-
-const publicUrl = `${import.meta.env.VITE_API_LINK}/public`;
-const protectedUrl = `${import.meta.env.VITE_API_LINK}/api`;
+import apiClient from "./apiClient";
+import {
+  ArtPiece,
+  CreateArtPieceInput,
+  UpdateArtPieceInput,
+  UpdateMediaInput,
+  ApiResponse,
+} from "../types";
 
 export interface GetByModuleParams {
   year: number | string;
@@ -15,28 +18,17 @@ export interface GetBySubjectParams {
   subject: string;
 }
 
-export interface SaveArtPieceParams {
-  title: string;
-  description: string;
-  year: number;
-  module: number;
-  subject: string;
-  media: MediaItem[] | any[];
-}
-
-export interface UpdateArtPieceParams {
+export type SaveArtPieceParams = CreateArtPieceInput;
+export type UpdateArtPieceParams = UpdateArtPieceInput & {
   id: string | number;
-  title: string;
-  description: string;
-  year: number;
-  module: number;
-  subject: string;
-}
+};
 
 // Get one
-const getArtPiece = async (id: string | number): Promise<ArtPiece> => {
-  return await axios
-    .get<ArtPiece>(`${publicUrl}/${id}`)
+const getArtPiece = async (
+  id: string | number,
+): Promise<ApiResponse<ArtPiece>> => {
+  return await apiClient
+    .get<ApiResponse<ArtPiece>>(`/artPiece/${id}`)
     .then((response) => response.data);
 };
 
@@ -44,12 +36,12 @@ const getArtPiece = async (id: string | number): Promise<ArtPiece> => {
 const getArtPiecesByYearByModule = async ({
   year,
   module,
-}: GetByModuleParams): Promise<{ data: ArtPiece[] }> => {
-  return await axios
-    .get<{ data: ArtPiece[] }>(`${publicUrl}/module`, {
+}: GetByModuleParams): Promise<ApiResponse<ArtPiece[]>> => {
+  return await apiClient
+    .get<ApiResponse<ArtPiece[]>>("/artPiece/module", {
       params: {
-        year: typeof year === "string" ? parseInt(year) : year,
-        module: typeof module === "string" ? parseInt(module) : module,
+        year: typeof year === "string" ? parseInt(year, 10) : year,
+        module: typeof module === "string" ? parseInt(module, 10) : module,
       },
     })
     .then((response) => response.data);
@@ -60,12 +52,12 @@ const getArtPiecesByYearByModuleBySubject = async ({
   year,
   module,
   subject,
-}: GetBySubjectParams): Promise<{ data: ArtPiece[] }> => {
-  return await axios
-    .get<{ data: ArtPiece[] }>(`${publicUrl}/subject`, {
+}: GetBySubjectParams): Promise<ApiResponse<ArtPiece[]>> => {
+  return await apiClient
+    .get<ApiResponse<ArtPiece[]>>("/artPiece/subject", {
       params: {
-        year: typeof year === "string" ? parseInt(year) : year,
-        module: typeof module === "string" ? parseInt(module) : module,
+        year: typeof year === "string" ? parseInt(year, 10) : year,
+        module: typeof module === "string" ? parseInt(module, 10) : module,
         subject,
       },
     })
@@ -73,77 +65,108 @@ const getArtPiecesByYearByModuleBySubject = async ({
 };
 
 // Get portfolio items
-const getPortfolioPieces = async (): Promise<{ data: ArtPiece[] }> => {
-  return await axios
-    .get<{ data: ArtPiece[] }>(`${publicUrl}/portfolio`)
+const getPortfolioPieces = async (): Promise<ApiResponse<ArtPiece[]>> => {
+  return await apiClient
+    .get<ApiResponse<ArtPiece[]>>("/artPiece/portfolio")
     .then((response) => response.data);
 };
 
 // Save
-const saveArtPiece = async (
-  { title, description, year, module, subject, media }: SaveArtPieceParams,
-  accessToken: string | null,
-): Promise<ArtPiece> => {
-  return await axios
-    .post<ArtPiece>(
-      `${protectedUrl}/artpiece`,
-      { title, description, year, module, subject, media },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    )
+const saveArtPiece = async ({
+  title,
+  description,
+  year,
+  module,
+  subject,
+  media,
+}: SaveArtPieceParams): Promise<ApiResponse<ArtPiece>> => {
+  return await apiClient
+    .post<ApiResponse<ArtPiece>>("/artPiece", {
+      title,
+      description,
+      year: typeof year === "string" ? parseInt(year, 10) : year,
+      module: typeof module === "string" ? parseInt(module, 10) : module,
+      subject,
+      media: media.map((item, index) => ({
+        locationReference: item.locationReference,
+        order: item.order ?? index + 1,
+      })),
+    })
     .then((response) => response.data);
 };
 
 // Delete
 const deleteArtPiece = async (
   id: string | number,
-  accessToken: string | null,
-) => {
-  return await axios.delete(`${protectedUrl}/artpiece/${id}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+): Promise<{ message: string }> => {
+  return await apiClient
+    .delete<{ message: string }>(`/artPiece/${id}`)
+    .then((response) => response.data);
 };
 
 // Update
 const updateArtPiece = async (
-  { id, title, description, year, module, subject }: UpdateArtPieceParams,
-  accessToken: string | null,
-): Promise<ArtPiece> => {
-  return await axios
-    .put<ArtPiece>(
-      `${protectedUrl}/artpiece/${id}`,
-      { title, description, year, module, subject },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    )
+  params: UpdateArtPieceParams,
+): Promise<ApiResponse<ArtPiece>> => {
+  const {
+    id,
+    title,
+    description,
+    year,
+    module,
+    subject,
+    deletedMedia,
+    updatedMedia,
+    newMedia,
+  } = params;
+  return await apiClient
+    .put<ApiResponse<ArtPiece>>(`/artPiece/${id}`, {
+      ...(title !== undefined ? { title } : {}),
+      ...(description !== undefined ? { description } : {}),
+      ...(year !== undefined
+        ? { year: typeof year === "string" ? parseInt(year, 10) : year }
+        : {}),
+      ...(module !== undefined
+        ? {
+            module: typeof module === "string" ? parseInt(module, 10) : module,
+          }
+        : {}),
+      ...(subject !== undefined ? { subject } : {}),
+      ...(deletedMedia !== undefined ? { deletedMedia } : {}),
+      ...(updatedMedia !== undefined ? { updatedMedia } : {}),
+      ...(newMedia !== undefined ? { newMedia } : {}),
+    })
     .then((response) => response.data);
 };
 
 // Update media
 const updateMedia = async (
   artPieceId: string | number,
-  updatedMedia: any[],
-  deletedMedia: (string | number)[],
-  newMedia: any,
-  accessToken: string | null,
-) => {
-  return await axios.put(
-    `${protectedUrl}/media/${artPieceId}`,
-    { updatedMedia, deletedMedia, newMedia },
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  );
+  updatedMedia?: UpdateMediaInput["updatedMedia"],
+  deletedMedia?: (string | number)[],
+  newMedia?: UpdateMediaInput["newMedia"],
+): Promise<void> => {
+  return await apiClient
+    .put<void>(`/media/${artPieceId}`, {
+      ...(deletedMedia ? { deletedMedia: deletedMedia.map(String) } : {}),
+      ...(updatedMedia
+        ? {
+            updatedMedia: updatedMedia.map((item) => ({
+              id: String(item.id),
+              ...(item.order !== undefined ? { order: item.order } : {}),
+            })),
+          }
+        : {}),
+      ...(newMedia
+        ? {
+            newMedia: newMedia.map((item, index) => ({
+              locationReference: item.locationReference,
+              order: item.order ?? index + 1,
+            })),
+          }
+        : {}),
+    })
+    .then((response) => response.data);
 };
 
 export default {

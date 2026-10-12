@@ -1,4 +1,8 @@
-export default function SubjectEnumToPath(subjectEnum: string): string {
+import { SubjectCategory, SubjectType } from "../types";
+
+export function SubjectEnumToPath(
+  subjectEnum: SubjectType | string,
+): SubjectCategory {
   switch (subjectEnum) {
     case "WERKPRAKTIJK_1":
     case "WERKPRAKTIJK_2":
@@ -12,3 +16,20 @@ export default function SubjectEnumToPath(subjectEnum: string): string {
       return "werkpraktijk";
   }
 }
+
+export function PathToSubjectEnums(
+  path: SubjectCategory | string,
+): SubjectType[] {
+  switch (path) {
+    case "werkpraktijk":
+      return ["WERKPRAKTIJK_1", "WERKPRAKTIJK_2"];
+    case "kennis":
+      return ["THEORIE", "SKILLS"];
+    case "positionering":
+      return ["POSITIONERING"];
+    default:
+      return ["WERKPRAKTIJK_1", "WERKPRAKTIJK_2"];
+  }
+}
+
+export default SubjectEnumToPath;

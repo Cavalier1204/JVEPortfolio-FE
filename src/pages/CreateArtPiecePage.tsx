@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ArtPieceManager from "../services/ArtPieceManager";
-import TokenManager from "../services/TokenManager";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
 import { imageUploader } from "../services/MediaUtils";
+import { useAuth } from "../modules/useAuth";
 
 const CreatePage: React.FC = () => {
   const titleHook = useState<string>("");
@@ -16,13 +16,14 @@ const CreatePage: React.FC = () => {
 
   const loadingHook = useState<boolean>(false);
 
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!TokenManager.getClaims()) {
-      navigate("/");
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login", { replace: true });
     }
-  }, [navigate]);
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,17 +39,14 @@ const CreatePage: React.FC = () => {
       const subject = subjectHook[0];
 
       try {
-        await ArtPieceManager.saveArtPiece(
-          {
-            title,
-            description,
-            year,
-            module,
-            media: media.mediaFiles,
-            subject,
-          },
-          TokenManager.getAccessToken(),
-        );
+        await ArtPieceManager.saveArtPiece({
+          title,
+          description,
+          year,
+          module,
+          media: media.mediaFiles,
+          subject,
+        });
 
         const subjectParam = SubjectEnumToPath(subject);
         loadingHook[1](false);
@@ -60,29 +58,33 @@ const CreatePage: React.FC = () => {
     }
   };
 
-  if (TokenManager.getClaims()) {
-    return (
-      <div className="md:container md:mx-auto flex justify-center pt-5">
-        <div className="w-full max-w-md flex flex-col justify-center mb-10">
-          <ArtPieceForm
-            onSubmit={handleSubmit}
-            headerText="Portfolio item aanmaken"
-            titleHook={titleHook}
-            descriptionHook={descriptionHook}
-            yearHook={yearHook}
-            moduleHook={moduleHook}
-            subjectHook={subjectHook}
-            mediaHook={mediaHook}
-            onClose={() => navigate("/")}
-            loadingHook={loadingHook}
-            dataTestId="uploadForm"
-          />
-        </div>
-      </div>
-    );
-  } else {
-    return <Navigate to="/login" />;
+  if (authLoading) {
+    return null;
   }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div className="md:container md:mx-auto flex justify-center pt-5">
+      <div className="w-full max-w-md flex flex-col justify-center mb-10">
+        <ArtPieceForm
+          onSubmit={handleSubmit}
+          headerText="Portfolio item aanmaken"
+          titleHook={titleHook}
+          descriptionHook={descriptionHook}
+          yearHook={yearHook}
+          moduleHook={moduleHook}
+          subjectHook={subjectHook}
+          mediaHook={mediaHook}
+          onClose={() => navigate("/")}
+          loadingHook={loadingHook}
+          dataTestId="uploadForm"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default CreatePage;

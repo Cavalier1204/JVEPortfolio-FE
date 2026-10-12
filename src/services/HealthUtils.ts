@@ -1,7 +1,9 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
+import apiClient from "./apiClient";
+import { HealthResponse } from "../types";
 
-const apiUrl = `${import.meta.env.VITE_API_LINK}/health`;
-
-export default function checkServerHealth(): Promise<AxiosResponse> {
-  return axios.get(apiUrl);
+export default function checkServerHealth(): Promise<
+  AxiosResponse<HealthResponse>
+> {
+  return apiClient.get<HealthResponse>("/health");
 }

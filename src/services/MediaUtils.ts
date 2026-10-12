@@ -1,11 +1,9 @@
 import { v4 } from "uuid";
 import imageCompression from "browser-image-compression";
 import axios from "axios";
+import { UploadedMediaItem } from "../types";
 
-export interface UploadedMediaItem {
-  locationReference: string;
-  order: number;
-}
+export type { UploadedMediaItem };
 
 export const imageUploader = async (
   media: any[] | null,

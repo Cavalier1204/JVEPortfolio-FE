@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
@@ -6,8 +7,26 @@ import ModulePage from "./pages/ModulePage";
 import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
 import SubjectPage from "./pages/SubjectPage";
-import TokenManager from "./services/TokenManager";
-import { AuthProvider } from "./modules/AuthContext";
+import { AuthProvider } from "./modules/AuthProvider";
+import { useAuth } from "./modules/useAuth";
+
+const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({
+  children,
+}) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return null;
+  }
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+const LoginRoute: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return null;
+  }
+  return isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />;
+};
 
 function App() {
   return (
@@ -16,15 +35,13 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginRoute />} />
           <Route
             path="/upload"
             element={
-              TokenManager.getClaims() ? (
+              <ProtectedRoute>
                 <CreatePage />
-              ) : (
-                <Navigate to="/login" />
-              )
+              </ProtectedRoute>
             }
           />
           <Route path="/module/:year/:module" element={<ModulePage />} />

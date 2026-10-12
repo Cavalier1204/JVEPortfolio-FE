@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "./Carousel";
-import TokenManager from "../services/TokenManager";
+import { useAuth } from "../modules/useAuth";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Modal from "./Modal";
 import ArtPieceManager from "../services/ArtPieceManager";
@@ -15,8 +15,9 @@ interface PortfolioItemProps {
 }
 
 const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
+  const { isAuthenticated } = useAuth();
   const titleHook = useState<string>(piece.title);
-  const descriptionHook = useState<string>(piece.description);
+  const descriptionHook = useState<string>(piece.description ?? "");
   const yearHook = useState<number | string>(piece.year);
   const moduleHook = useState<number | string>(piece.module);
   const mediaHook = useState<MediaItem[]>(
@@ -38,7 +39,7 @@ const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
 
   const openEditModal = () => {
     titleHook[1](piece.title);
-    descriptionHook[1](piece.description);
+    descriptionHook[1](piece.description ?? "");
     yearHook[1](piece.year);
     moduleHook[1](piece.module);
     mediaHook[1](piece.media);
@@ -97,23 +98,21 @@ const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
     const module = Number(moduleHook[0]);
     const subject = subjectHook[0];
 
-    await ArtPieceManager.updateArtPiece(
-      { id, title, description, year, module, subject },
-      TokenManager.getAccessToken(),
-    ).catch((error) => {
+    await ArtPieceManager.updateArtPiece({
+      id,
+      title,
+      description,
+      year,
+      module,
+      subject,
+    }).catch((error) => {
       console.error(error);
       loadingHook[1](false);
     });
 
     const subjectParam = SubjectEnumToPath(subject);
 
-    await ArtPieceManager.updateMedia(
-      id,
-      updatedMedia,
-      deletedMedia,
-      newMedia,
-      TokenManager.getAccessToken(),
-    )
+    await ArtPieceManager.updateMedia(id, updatedMedia, deletedMedia, newMedia)
       .then(() => {
         const url = `/module/${year}/${module}/${subjectParam}`;
         if (location.pathname === url) {
@@ -134,10 +133,7 @@ const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
 
     const subjectParam = SubjectEnumToPath(piece.subject);
 
-    await ArtPieceManager.deleteArtPiece(
-      piece.id,
-      TokenManager.getAccessToken(),
-    )
+    await ArtPieceManager.deleteArtPiece(piece.id)
       .then(() => {
         const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
         if (location.pathname === url) {
@@ -173,7 +169,7 @@ const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
           <p className="leading-relaxed mb-0 text-gray-600 whitespace-pre-line">
             {piece.description}
           </p>
-          {TokenManager.getClaims() ? (
+          {isAuthenticated ? (
             <>
               <div
                 data-testid="deleteButton"

@@ -1,46 +1,43 @@
 import React, { useEffect, useState } from "react";
-import UserManager from "../services/UserManager";
 import { useNavigate } from "react-router-dom";
-import TokenManager from "../services/TokenManager";
-import { useAuth } from "../modules/AuthContext";
+import { useAuth } from "../modules/useAuth";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
 
-  const { login } = useAuth();
-
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (TokenManager.getClaims()) {
-      navigate("/");
-      window.location.reload();
+    if (!authLoading && isAuthenticated) {
+      navigate("/", { replace: true });
     }
-  }, [navigate]);
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError("");
 
-    UserManager.signin(username, password)
-      .then((token) => {
-        login(token as any);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-        if (error.response && error.response.status === 401) {
-          setLoginError("Gebruikersnaam en/of wachtwoord incorrect.");
-          setPassword("");
-          document.getElementById("emailAddress")?.focus();
-        } else {
-          setLoginError("Er is iets fout gegaan, probeer het later opnieuw.");
-        }
-      });
+    try {
+      await login(username, password);
+      navigate("/");
+    } catch (error: any) {
+      console.error(error);
+      setIsLoading(false);
+      if (error.response && error.response.status === 401) {
+        setLoginError("Gebruikersnaam en/of wachtwoord incorrect.");
+        setPassword("");
+        document.getElementById("emailAddress")?.focus();
+      } else if (error.response && error.response.status === 429) {
+        setLoginError("Te veel inlogpogingen, probeer het later opnieuw.");
+      } else {
+        setLoginError("Er is iets fout gegaan, probeer het later opnieuw.");
+      }
+    }
   };
 
   return (
