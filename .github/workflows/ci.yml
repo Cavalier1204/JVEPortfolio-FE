@@ -68,7 +68,10 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
       ALLOWED_ORIGINS: '["http://localhost:5173"]'
-      VITE_API_LINK: http://localhost:8000
+      VITE_BACKEND_URL: http://localhost:8000
+      VITE_BUNNY_NET_STORAGE_URL: https://storage.bunnycdn.com/dummy
+      VITE_BUNNY_NET_CDN_URL: https://dummy.b-cdn.net/
+      VITE_BUNNY_NET_API_KEY: dummy
     steps:
       - name: Checkout frontend repository
         uses: actions/checkout@v4

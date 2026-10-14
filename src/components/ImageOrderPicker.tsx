@@ -3,6 +3,7 @@ import { arrayMoveImmutable } from "array-move";
 import { useDropzone } from "react-dropzone";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import { TrashIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { env } from "../config/env";
 
 interface SortableItemProps {
   value: any;
@@ -18,8 +19,7 @@ const SortableItem = SortableElement<SortableItemProps>(
       </span>
       <img
         src={
-          value.preview ??
-          `${import.meta.env.VITE_BUNNY_CDN_URL}/${value.locationReference}`
+          value.preview ?? `${env.BUNNY_NET.CDN_URL}/${value.locationReference}`
         }
         alt="Preview"
         className="image-preview w-[100px] h-[100px] object-cover rounded-md border border-gray-300 shadow-sm"

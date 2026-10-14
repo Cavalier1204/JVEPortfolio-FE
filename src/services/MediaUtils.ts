@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import imageCompression from "browser-image-compression";
 import axios from "axios";
 import { UploadedMediaItem } from "../types";
+import { env } from "../config/env";
 
 export type { UploadedMediaItem };
 
@@ -38,11 +39,11 @@ export const imageUploader = async (
 
       try {
         await axios.put(
-          `${import.meta.env.VITE_BUNNY_STORAGE_URL}/${storageRef}`,
+          `${env.BUNNY_NET.STORAGE_URL}/${storageRef}`,
           resizedFile,
           {
             headers: {
-              AccessKey: import.meta.env.VITE_BUNNY_API_KEY,
+              AccessKey: env.BUNNY_NET.API_KEY,
               "Content-Type": "application/octet-stream",
             },
           },

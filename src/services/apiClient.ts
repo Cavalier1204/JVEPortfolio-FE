@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { env } from "../config/env";
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_LINK,
+  baseURL: env.BACKEND_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

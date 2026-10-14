@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import Zoom from "react-medium-image-zoom";
 import { MediaItem } from "../types";
+import { env } from "../config/env";
 
 interface CarouselProps {
   media: MediaItem[];
@@ -122,7 +123,7 @@ export default function Carousel({ media }: CarouselProps) {
               <Zoom>
                 <img
                   className="object-contain object-center h-full mx-auto cursor-zoom-in w-full"
-                  src={`${import.meta.env.VITE_BUNNY_CDN_URL}/${file.locationReference}`}
+                  src={`${env.BUNNY_NET.CDN_URL}/${file.locationReference}`}
                   alt=""
                   loading="lazy"
                 />
@@ -133,7 +134,7 @@ export default function Carousel({ media }: CarouselProps) {
                 controls
                 muted
                 key={index}
-                src={`${import.meta.env.VITE_BUNNY_CDN_URL}/${file.locationReference}`}
+                src={`${env.BUNNY_NET.CDN_URL}/${file.locationReference}`}
               />
             ) : null}
           </div>
