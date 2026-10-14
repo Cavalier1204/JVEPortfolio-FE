@@ -1,15 +1,23 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const ModulePage: React.FC = () => {
   const { year, module } = useParams<{ year: string; module: string }>();
 
   return (
-    <div className="md:container md:mx-auto flex justify-center pt-5">
-      <div className="container px-5 py-6 mx-auto">
-        <div className="flex flex-wrap -m-4">
+    <div className="md:container md:mx-auto flex justify-center">
+      <div className="container p-5 mx-auto">
+        <Breadcrumbs
+          items={[
+            { label: "Home", to: "/" },
+            { label: `Leerjaar ${year}` },
+            { label: `Module ${module}` },
+          ]}
+        />
+        <div className="flex flex-row pt-4 gap-5">
           <Link
-            className="p-4 md:w-1/3"
+            className="md:w-1/3"
             to={`/module/${year}/${module}/werkpraktijk`}
           >
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
@@ -31,10 +39,7 @@ const ModulePage: React.FC = () => {
               </div>
             </div>
           </Link>
-          <Link
-            className="p-4 md:w-1/3"
-            to={`/module/${year}/${module}/kennis`}
-          >
+          <Link className="md:w-1/3" to={`/module/${year}/${module}/kennis`}>
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
               <img
                 className="lg:h-48 md:h-36 w-full object-cover object-center"
@@ -55,7 +60,7 @@ const ModulePage: React.FC = () => {
             </div>
           </Link>
           <Link
-            className="p-4 md:w-1/3"
+            className="md:w-1/3"
             to={`/module/${year}/${module}/positionering`}
           >
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">

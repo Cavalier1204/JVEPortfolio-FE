@@ -3,6 +3,7 @@ import ArtPieceManager from "../services/ArtPieceManager";
 import { useNavigate } from "react-router-dom";
 import SubjectEnumToPath from "../services/SubjectParser";
 import ArtPieceForm from "../components/ArtPieceForm";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { imageUploader } from "../services/MediaUtils";
 import { useAuth } from "../modules/useAuth";
 
@@ -15,6 +16,7 @@ const CreatePage: React.FC = () => {
   const subjectHook = useState<string>("WERKPRAKTIJK_1");
 
   const loadingHook = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -28,9 +30,14 @@ const CreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loadingHook[1](true);
+    setErrorMessage(null);
 
-    if (mediaHook[0] !== null) {
-      const media = await imageUploader(mediaHook[0]);
+    try {
+      let uploadedMedia: any[] = [];
+      if (mediaHook[0] && mediaHook[0].length > 0) {
+        const media = await imageUploader(mediaHook[0]);
+        uploadedMedia = media.mediaFiles;
+      }
 
       const title = titleHook[0];
       const description = descriptionHook[0];
@@ -38,37 +45,69 @@ const CreatePage: React.FC = () => {
       const module = Number(moduleHook[0]);
       const subject = subjectHook[0];
 
-      try {
-        await ArtPieceManager.saveArtPiece({
-          title,
-          description,
-          year,
-          module,
-          media: media.mediaFiles,
-          subject,
-        });
+      await ArtPieceManager.saveArtPiece({
+        title,
+        description,
+        year,
+        module,
+        media: uploadedMedia,
+        subject,
+      });
 
-        const subjectParam = SubjectEnumToPath(subject);
-        loadingHook[1](false);
-        navigate(`/module/${year}/${module}/${subjectParam}`);
-      } catch (error) {
-        console.error("Error saving art piece:", error);
-        loadingHook[1](false);
-      }
+      const subjectParam = SubjectEnumToPath(subject);
+      loadingHook[1](false);
+      navigate(`/module/${year}/${module}/${subjectParam}`);
+    } catch (error) {
+      console.error("Error saving art piece:", error);
+      setErrorMessage(
+        "Er is een fout opgetreden bij het aanmaken van het portfolio item. Controleer de velden en probeer het opnieuw.",
+      );
+      loadingHook[1](false);
     }
   };
 
-  if (authLoading) {
-    return null;
-  }
+  const handleClose = () => {
+    const isDirty = Boolean(
+      titleHook[0] ||
+        descriptionHook[0] ||
+        (mediaHook[0] && mediaHook[0].length > 0),
+    );
+    if (isDirty) {
+      if (
+        window.confirm(
+          "Weet je zeker dat je wilt annuleren? Niet-opgeslagen wijzigingen gaan verloren.",
+        )
+      ) {
+        navigate(-1);
+      }
+    } else {
+      navigate(-1);
+    }
+  };
 
-  if (!isAuthenticated) {
+  if (authLoading || !isAuthenticated) {
     return null;
   }
 
   return (
     <div className="md:container md:mx-auto flex justify-center pt-5">
-      <div className="w-full max-w-md flex flex-col justify-center mb-10">
+      <div className="w-full max-w-md flex flex-col justify-center mb-10 px-4">
+        <Breadcrumbs
+          items={[
+            { label: "Home", to: "/" },
+            { label: "Nieuw portfolio item" },
+          ]}
+        />
+
+        {errorMessage && (
+          <div
+            className="bg-red-50 border border-red-300 text-red-700 px-4 py-2.5 rounded mb-4 text-sm"
+            role="alert"
+          >
+            {errorMessage}
+          </div>
+        )}
+
         <ArtPieceForm
           onSubmit={handleSubmit}
           headerText="Portfolio item aanmaken"
@@ -78,7 +117,7 @@ const CreatePage: React.FC = () => {
           moduleHook={moduleHook}
           subjectHook={subjectHook}
           mediaHook={mediaHook}
-          onClose={() => navigate("/")}
+          onClose={handleClose}
           loadingHook={loadingHook}
           dataTestId="uploadForm"
         />

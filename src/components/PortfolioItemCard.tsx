@@ -1,262 +1,99 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Carousel from "./Carousel";
 import { useAuth } from "../modules/useAuth";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import Modal from "./Modal";
-import ArtPieceManager from "../services/ArtPieceManager";
-import { useLocation, useNavigate } from "react-router-dom";
-import SubjectEnumToPath from "../services/SubjectParser";
-import ArtPieceForm from "./ArtPieceForm";
-import { imageUploader } from "../services/MediaUtils";
-import { ArtPiece, MediaItem } from "../types";
+import EditArtPieceModal from "./EditArtPieceModal";
+import DeleteArtPieceModal from "./DeleteArtPieceModal";
+import { ArtPiece } from "../types";
 
-interface PortfolioItemProps {
+export interface PortfolioItemProps {
   piece: ArtPiece;
+  onUpdate?: (updatedPiece: ArtPiece) => void;
+  onDelete?: (deletedId: string) => void;
 }
 
-const PortfolioItem: React.FC<PortfolioItemProps> = ({ piece }) => {
+const PortfolioItem: React.FC<PortfolioItemProps> = ({
+  piece,
+  onUpdate,
+  onDelete,
+}) => {
   const { isAuthenticated } = useAuth();
-  const titleHook = useState<string>(piece.title);
-  const descriptionHook = useState<string>(piece.description ?? "");
-  const yearHook = useState<number | string>(piece.year);
-  const moduleHook = useState<number | string>(piece.module);
-  const mediaHook = useState<MediaItem[]>(
-    [...piece.media].sort((a, b) => a.order - b.order),
-  );
-  const subjectHook = useState<string>(piece.subject);
-
+  const [currentPiece, setCurrentPiece] = useState<ArtPiece>(piece);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const loadingHook = useState<boolean>(false);
-
   useEffect(() => {
-    const sortedMedia = [...piece.media].sort((a, b) => a.order - b.order);
-    mediaHook[1](sortedMedia);
-  }, [piece.media]);
+    setCurrentPiece(piece);
+  }, [piece]);
 
-  const openEditModal = () => {
-    titleHook[1](piece.title);
-    descriptionHook[1](piece.description ?? "");
-    yearHook[1](piece.year);
-    moduleHook[1](piece.module);
-    mediaHook[1](piece.media);
-    subjectHook[1](piece.subject);
-    setShowEditModal(true);
+  const handleSaved = (updated: ArtPiece) => {
+    setCurrentPiece(updated);
+    onUpdate?.(updated);
   };
 
-  const openDeleteModal = () => {
-    setShowDeleteModal(true);
-  };
-
-  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    loadingHook[1](true);
-
-    const deletedMedia: (string | number)[] = [];
-    let newMedia: any[] = [];
-    const updatedMedia: any[] = [];
-
-    piece.media.forEach((item) => {
-      if (!mediaHook[0].includes(item)) {
-        if (item.id !== undefined) {
-          deletedMedia.push(item.id);
-        }
-      }
-    });
-
-    mediaHook[0].forEach((item: any, index: number) => {
-      if (item instanceof File) {
-        newMedia.push({ ...item, order: index + 1 });
-        return;
-      }
-
-      updatedMedia.push({
-        id: item.id,
-        artPieceId: item.artPieceId,
-        createdAt: item.createdAt,
-        locationReference: item.locationReference,
-        order: index + 1,
-      });
-    });
-
-    try {
-      if (newMedia.length > 0) {
-        const uploadRes = await imageUploader(newMedia);
-        newMedia = uploadRes.mediaFiles;
-      }
-    } catch (e) {
-      console.log("Error uploading new media:", e);
-    }
-
-    const id = piece.id;
-    const title = titleHook[0];
-    const description = descriptionHook[0];
-    const year = Number(yearHook[0]);
-    const module = Number(moduleHook[0]);
-    const subject = subjectHook[0];
-
-    await ArtPieceManager.updateArtPiece({
-      id,
-      title,
-      description,
-      year,
-      module,
-      subject,
-    }).catch((error) => {
-      console.error(error);
-      loadingHook[1](false);
-    });
-
-    const subjectParam = SubjectEnumToPath(subject);
-
-    await ArtPieceManager.updateMedia(id, updatedMedia, deletedMedia, newMedia)
-      .then(() => {
-        const url = `/module/${year}/${module}/${subjectParam}`;
-        if (location.pathname === url) {
-          window.location.reload();
-        } else {
-          navigate(url);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        loadingHook[1](false);
-      });
-  };
-
-  const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    loadingHook[1](true);
-
-    const subjectParam = SubjectEnumToPath(piece.subject);
-
-    await ArtPieceManager.deleteArtPiece(piece.id)
-      .then(() => {
-        const url = `/module/${piece.year}/${piece.module}/${subjectParam}`;
-        if (location.pathname === url) {
-          window.location.reload();
-        } else {
-          navigate(url);
-        }
-      })
-      .catch((e) => {
-        console.error("Error deleting artpiece or media:", e);
-        loadingHook[1](false);
-        alert(
-          "Een is een fout opgetreden bij het verwijderen van het item. Probeer het later opnieuw.",
-        );
-      });
+  const handleDeleted = (id: string) => {
+    onDelete?.(id);
   };
 
   return (
-    <div className="p-4 md:w-1/3" key={piece.id} data-testid="artpieceCard">
-      <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg group">
-        {piece.media.length > 0 && (
-          <div className="lg:h-56 md:h-40 bg-gray-100">
-            <Carousel media={piece.media} />
+    <div
+      className="p-4 md:w-1/3 w-full"
+      key={currentPiece.id}
+      data-testid="artpieceCard"
+    >
+      <div className="h-fit border-2 border-gray-300 border-opacity-60 rounded-lg group relative">
+        {currentPiece.media.length > 0 && (
+          <div className="lg:h-56 md:h-40 h-48 bg-gray-100">
+            <Carousel media={currentPiece.media} />
           </div>
         )}
         <div className="px-6 pb-6 pt-5 relative">
-          <h1
+          <h3
             className="title-font text-lg font-semibold text-gray-800 mb-3"
             data-testid="artpieceTitle"
           >
-            {piece.title}
-          </h1>
+            {currentPiece.title}
+          </h3>
           <p className="leading-relaxed mb-0 text-gray-600 whitespace-pre-line">
-            {piece.description}
+            {currentPiece.description}
           </p>
-          {isAuthenticated ? (
+
+          {isAuthenticated && (
             <>
-              <div
+              <button
+                type="button"
                 data-testid="deleteButton"
-                className="hidden group-hover:block absolute p-2 border-black border-solid border-2 rounded bg-red-600 hover:bg-red-700 bottom-6 left-6 text-white cursor-pointer"
-                onClick={() => openDeleteModal()}
+                aria-label="Item verwijderen"
+                className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity absolute p-2 border-black border-solid border-2 rounded bg-red-600 hover:bg-red-700 bottom-6 left-6 text-white cursor-pointer"
+                onClick={() => setShowDeleteModal(true)}
               >
-                <TrashIcon className="h-6" />
-              </div>
-              <div
-                className="hidden group-hover:block absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6 cursor-pointer"
-                onClick={() => openEditModal()}
+                <TrashIcon className="h-6 w-6" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                data-testid="editButton"
+                aria-label="Item aanpassen"
+                className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity absolute p-2 border-gray-200 border-solid border-2 rounded bg-white hover:bg-gray-200 bottom-6 right-6 cursor-pointer"
+                onClick={() => setShowEditModal(true)}
               >
-                <PencilIcon className="h-6" />
-              </div>
+                <PencilIcon className="h-6 w-6" aria-hidden="true" />
+              </button>
             </>
-          ) : null}
-          {showEditModal ? (
-            <Modal>
-              <ArtPieceForm
-                onSubmit={handleUpdate}
-                headerText="Portfolio item aanpassen"
-                titleHook={titleHook}
-                descriptionHook={descriptionHook}
-                yearHook={yearHook}
-                moduleHook={moduleHook}
-                subjectHook={subjectHook}
-                mediaHook={mediaHook}
-                onClose={() => setShowEditModal(false)}
-                loadingHook={loadingHook}
-                dataTestId="uploadForm"
-              />
-            </Modal>
-          ) : null}
-          {showDeleteModal ? (
-            <Modal data-testid="deleteModal">
-              <h3>Portfolio item verwijderen</h3>
-              <form onSubmit={handleDelete}>
-                <h4 className="font-normal my-5">
-                  Weet je zeker dat je dit item wilt verwijderen?
-                </h4>
-                <div className="flex justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteModal(false)}
-                    className="bg-[#b5bab6] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md md:w-fit"
-                  >
-                    Annuleren
-                  </button>
-                  {loadingHook[0] ? (
-                    <button
-                      type="button"
-                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit flex cursor-not-allowed"
-                      disabled
-                    >
-                      <svg
-                        className="animate-spin h-5 w-5 mr-3"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        ></path>
-                      </svg>
-                      Verwijderen...
-                    </button>
-                  ) : (
-                    <button
-                      className="border-black border-solid bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded border-2 shadow-md md:w-fit"
-                      type="submit"
-                      data-testid="confirmDeleteButton"
-                    >
-                      Verwijderen
-                    </button>
-                  )}
-                </div>
-              </form>
-            </Modal>
-          ) : null}
+          )}
+
+          <EditArtPieceModal
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            piece={currentPiece}
+            onSaved={handleSaved}
+          />
+
+          <DeleteArtPieceModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
+            piece={currentPiece}
+            onDeleted={handleDeleted}
+          />
         </div>
       </div>
     </div>
