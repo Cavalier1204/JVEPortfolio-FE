@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "../modules/useAuth";
 import schoolYears from "../data/year-structure.json";
 import { SchoolYears } from "../types";
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
               title="Uitloggen"
               className="h-16 w-16 bg-[#a1a6a2] hover:bg-[#8f9490] rounded flex justify-center items-center transition-colors"
             >
-              <ArrowRightOnRectangleIcon
+              <ArrowRightStartOnRectangleIcon
                 className="h-10 w-10 text-white"
                 aria-hidden="true"
               />

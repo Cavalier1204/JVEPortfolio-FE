@@ -13,6 +13,7 @@ import ModulePage from "./pages/ModulePage";
 import PortfolioPage from "./pages/PortfolioPage";
 import LoginPage from "./pages/LoginPage";
 import SubjectPage from "./pages/SubjectPage";
+import PortfolioDetailPage from "./pages/PortfolioDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { AuthProvider } from "./modules/AuthProvider";
 import { useAuth } from "./modules/useAuth";
@@ -66,6 +67,7 @@ function App() {
             element={<SubjectPage />}
           />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/portfolio/:id" element={<PortfolioDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

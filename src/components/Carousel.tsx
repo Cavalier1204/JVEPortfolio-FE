@@ -101,8 +101,11 @@ export default function Carousel({ media }: CarouselProps) {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       aria-label="Media galerij"
-      className="overflow-hidden relative h-full w-full focus:outline-none"
+      className="overflow-hidden relative h-full w-full focus:outline-none rounded-lg bg-gray-100 shadow-[inset_0_2px_10px_rgba(0,0,0,0.08)]"
     >
+      {/* Inner shadow overlay to frame empty space behind/around media */}
+      <div className="pointer-events-none absolute inset-0 rounded-lg shadow-[inset_0_3px_12px_rgba(0,0,0,0.10)] z-10" />
+
       <div
         onTransitionEnd={handleTransitionEnd}
         className={`flex h-full ${
@@ -143,7 +146,7 @@ export default function Carousel({ media }: CarouselProps) {
 
       {/* Navigation arrows */}
       {isMulti && (
-        <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none">
+        <div className="absolute top-0 h-full w-full justify-between items-center flex text-white px-1 pointer-events-none z-20">
           <button
             type="button"
             onClick={previousSlide}
@@ -171,7 +174,7 @@ export default function Carousel({ media }: CarouselProps) {
 
       {/* Counter indicator */}
       {isMulti && (
-        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full pointer-events-none select-none font-sans z-10">
+        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full pointer-events-none select-none font-sans z-20">
           {activeRealIndex + 1} / {media.length}
         </div>
       )}
