@@ -19,9 +19,9 @@ test("Delete specific artpiece", async ({ login: page }) => {
 
   const target = targets.first();
 
-  await target.hover();
+  await target.click();
 
-  const deleteButton = target.locator('[data-testid="deleteButton"]');
+  const deleteButton = page.locator('[data-testid="deleteButton"]');
   await deleteButton.click();
 
   const modal = page.locator("form", { hasText: "Weet je zeker" });
