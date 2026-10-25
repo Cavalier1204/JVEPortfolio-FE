@@ -4,6 +4,9 @@ import App from "../src/App";
 import { useAuth } from "../src/modules/useAuth";
 
 vi.mock("../src/modules/useAuth");
+vi.mock("../src/modules/AuthProvider", () => ({
+  AuthProvider: ({ children }: any) => children,
+}));
 vi.mock("../src/services/HealthUtils", () => ({
   default: vi.fn(),
 }));
