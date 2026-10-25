@@ -32,6 +32,8 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [progressMessage, setProgressMessage] = useState<string | null>(null);
+  const [progressPercent, setProgressPercent] = useState<number | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +47,8 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
       setSubject(piece.subject);
       setMedia([...piece.media].sort((a, b) => a.order - b.order));
       setErrorMessage(null);
+      setProgressMessage(null);
+      setProgressPercent(null);
     }
   }, [isOpen, piece]);
 
@@ -54,6 +58,8 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
     e.preventDefault();
     setLoading(true);
     setErrorMessage(null);
+    setProgressMessage("Voorbereiden...");
+    setProgressPercent(0);
 
     const deletedMedia: (string | number)[] = [];
     let newMedia: any[] = [];
@@ -84,9 +90,15 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
 
     try {
       if (newMedia.length > 0) {
-        const uploadRes = await imageUploader(newMedia);
+        const uploadRes = await imageUploader(newMedia, (info) => {
+          setProgressMessage(info.message);
+          setProgressPercent(info.percent);
+        });
         newMedia = uploadRes.mediaFiles;
       }
+
+      setProgressMessage("Wijzigingen opslaan...");
+      setProgressPercent(100);
 
       const id = piece.id;
       const parsedYear = Number(year);
@@ -115,13 +127,16 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
       onSaved(resultingPiece);
       onClose();
 
-      const subjectParam = SubjectEnumToPath(subject);
-      const targetUrl = `/module/${parsedYear}/${parsedModule}/${subjectParam}`;
-      if (
-        location.pathname !== targetUrl &&
-        location.pathname !== "/portfolio"
-      ) {
-        navigate(targetUrl);
+      // If already on a detail view (/portfolio/:id), do not navigate away
+      const isDetailPage = /^\/portfolio\/[^/]+/.test(location.pathname);
+      if (!isDetailPage) {
+        const targetUrl =
+          subject === "PORTFOLIO"
+            ? "/portfolio"
+            : `/module/${parsedYear}/${parsedModule}/${SubjectEnumToPath(subject)}`;
+        if (location.pathname !== targetUrl) {
+          navigate(targetUrl);
+        }
       }
     } catch (error) {
       console.error("Error updating art piece:", error);
@@ -130,6 +145,8 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
       );
     } finally {
       setLoading(false);
+      setProgressMessage(null);
+      setProgressPercent(null);
     }
   };
 
@@ -155,6 +172,8 @@ export const EditArtPieceModal: React.FC<EditArtPieceModalProps> = ({
         onClose={onClose}
         loadingHook={[loading, setLoading]}
         dataTestId="uploadForm"
+        progressMessage={progressMessage}
+        progressPercent={progressPercent}
       />
     </Modal>
   );

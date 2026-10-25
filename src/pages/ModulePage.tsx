@@ -1,9 +1,41 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
+import rawSchoolYears from "../data/year-structure.json";
+import { SchoolYears } from "../types";
+
+const schoolYears = rawSchoolYears as SchoolYears;
 
 const ModulePage: React.FC = () => {
   const { year, module } = useParams<{ year: string; module: string }>();
+
+  const validYear = year && year in schoolYears;
+  const validModule =
+    validYear &&
+    module &&
+    schoolYears[year]?.includes(Number(module));
+
+  if (!validYear || !validModule) {
+    return (
+      <div className="md:container md:mx-auto flex justify-center pt-5">
+        <div className="container p-5 mx-auto text-center py-16 text-gray-600">
+          <Breadcrumbs
+            items={[
+              { label: "Home", to: "/" },
+              { label: "Module niet gevonden" },
+            ]}
+          />
+          <p className="mt-8 mb-4">Module niet gevonden.</p>
+          <Link
+            to="/"
+            className="bg-[#b5bab6] hover:bg-[#a1a6a2] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md transition-colors inline-block text-sm"
+          >
+            Terug naar home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="md:container md:mx-auto flex justify-center">

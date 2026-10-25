@@ -17,6 +17,8 @@ const CreatePage: React.FC = () => {
 
   const loadingHook = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [progressMessage, setProgressMessage] = useState<string | null>(null);
+  const [progressPercent, setProgressPercent] = useState<number | null>(null);
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -31,13 +33,21 @@ const CreatePage: React.FC = () => {
     e.preventDefault();
     loadingHook[1](true);
     setErrorMessage(null);
+    setProgressMessage("Voorbereiden...");
+    setProgressPercent(0);
 
     try {
       let uploadedMedia: any[] = [];
       if (mediaHook[0] && mediaHook[0].length > 0) {
-        const media = await imageUploader(mediaHook[0]);
+        const media = await imageUploader(mediaHook[0], (info) => {
+          setProgressMessage(info.message);
+          setProgressPercent(info.percent);
+        });
         uploadedMedia = media.mediaFiles;
       }
+
+      setProgressMessage("Portfolio item opslaan...");
+      setProgressPercent(100);
 
       const title = titleHook[0];
       const description = descriptionHook[0];
@@ -54,15 +64,24 @@ const CreatePage: React.FC = () => {
         subject,
       });
 
-      const subjectParam = SubjectEnumToPath(subject);
       loadingHook[1](false);
-      navigate(`/module/${year}/${module}/${subjectParam}`);
+      setProgressMessage(null);
+      setProgressPercent(null);
+
+      if (subject === "PORTFOLIO") {
+        navigate("/portfolio");
+      } else {
+        const subjectParam = SubjectEnumToPath(subject);
+        navigate(`/module/${year}/${module}/${subjectParam}`);
+      }
     } catch (error) {
       console.error("Error saving art piece:", error);
       setErrorMessage(
         "Er is een fout opgetreden bij het aanmaken van het portfolio item. Controleer de velden en probeer het opnieuw.",
       );
       loadingHook[1](false);
+      setProgressMessage(null);
+      setProgressPercent(null);
     }
   };
 
@@ -120,6 +139,8 @@ const CreatePage: React.FC = () => {
           onClose={handleClose}
           loadingHook={loadingHook}
           dataTestId="uploadForm"
+          progressMessage={progressMessage}
+          progressPercent={progressPercent}
         />
       </div>
     </div>

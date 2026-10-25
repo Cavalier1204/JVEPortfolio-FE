@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ArtPieceManager from "../services/ArtPieceManager";
 import PortfolioItem from "../components/PortfolioItemCard";
 import Breadcrumbs from "../components/Breadcrumbs";
@@ -103,9 +103,22 @@ const SubjectPage: React.FC = () => {
               Opnieuw proberen
             </button>
           </div>
-        ) : !subjectInfo || artPieces.length === 0 ? (
+        ) : !subjectInfo ||
+          !subjectInfo.subjects.some((s) =>
+            artPieces.some((piece) => piece.subject === s.enumName),
+          ) ? (
           <div className="text-center py-16 text-gray-600">
-            <p>Geen portfolio items gevonden voor dit onderdeel.</p>
+            <p className="mb-4">
+              Geen portfolio items gevonden voor dit onderdeel.
+            </p>
+            {!subjectInfo && (
+              <Link
+                to={`/module/${year}/${module}`}
+                className="bg-[#b5bab6] hover:bg-[#a1a6a2] text-white px-4 py-2 rounded border-2 border-[#a1a6a2] shadow-md transition-colors inline-block text-sm"
+              >
+                Terug naar module overzicht
+              </Link>
+            )}
           </div>
         ) : (
           subjectInfo.subjects.map(({ enumName, displayName }, index) => {
