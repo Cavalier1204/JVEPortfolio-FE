@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ImageOrderPicker from "../../src/components/ImageOrderPicker";
 
 describe("ImageOrderPicker", () => {
@@ -29,10 +29,35 @@ describe("ImageOrderPicker", () => {
 
   it("should show helper text when images are present", () => {
     const mockImages = [{ preview: "blob:test/1", name: "img1.png" }];
-    render(<ImageOrderPicker images={mockImages} setImages={vi.fn()} />);
+    const { unmount } = render(
+      <ImageOrderPicker images={mockImages} setImages={vi.fn()} />,
+    );
 
     expect(
       screen.getByText("Sleep afbeeldingen om de weergavevolgorde aan te passen"),
     ).toBeInTheDocument();
+    unmount();
+  });
+
+  it("should handle dropping valid files", async () => {
+    const setImages = vi.fn();
+    const { container } = render(
+      <ImageOrderPicker images={[]} setImages={setImages} />,
+    );
+
+    const dropzone = container.querySelector(".dropzone")!;
+    const file = new File(["test-content"], "photo.jpg", { type: "image/jpeg" });
+
+    fireEvent.drop(dropzone, {
+      dataTransfer: {
+        files: [file],
+        items: [{ kind: "file", type: file.type, getAsFile: () => file }],
+        types: ["Files"],
+      },
+    });
+
+    await waitFor(() => {
+      expect(setImages).toHaveBeenCalled();
+    });
   });
 });
