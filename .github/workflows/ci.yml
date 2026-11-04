@@ -25,6 +25,11 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
+    env:
+      VITE_BACKEND_URL: http://localhost:8000
+      VITE_BUNNY_NET_STORAGE_URL: https://storage.bunnycdn.com/dummy
+      VITE_BUNNY_NET_CDN_URL: https://dummy.b-cdn.net/
+      VITE_BUNNY_NET_API_KEY: dummy
     steps:
       - name: Checkout frontend repository
         uses: actions/checkout@v4

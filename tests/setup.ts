@@ -2,6 +2,16 @@ import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
+// Fallback environment variables for tests (e.g. CI environments without .env)
+process.env.VITE_BACKEND_URL =
+  process.env.VITE_BACKEND_URL || "http://localhost:8000";
+process.env.VITE_BUNNY_NET_STORAGE_URL =
+  process.env.VITE_BUNNY_NET_STORAGE_URL || "https://storage.bunnycdn.com/dummy";
+process.env.VITE_BUNNY_NET_CDN_URL =
+  process.env.VITE_BUNNY_NET_CDN_URL || "https://dummy.b-cdn.net/";
+process.env.VITE_BUNNY_NET_API_KEY =
+  process.env.VITE_BUNNY_NET_API_KEY || "dummy";
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();

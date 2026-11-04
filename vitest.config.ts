@@ -8,6 +8,12 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.{test,spec}.{ts,tsx}"],
+    env: {
+      VITE_BACKEND_URL: "http://localhost:8000",
+      VITE_BUNNY_NET_STORAGE_URL: "https://storage.bunnycdn.com/dummy",
+      VITE_BUNNY_NET_CDN_URL: "https://dummy.b-cdn.net/",
+      VITE_BUNNY_NET_API_KEY: "dummy",
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
